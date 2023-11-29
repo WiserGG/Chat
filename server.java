@@ -11,6 +11,32 @@ import java.util.Vector;
 public class server extends Thread {
     static final int port = 3000;
     static int counter_client = 0;
+    
+    //Codici per la registrazione 0 - 9
+
+    //ODR = Operazione di Registrazione
+    static final int ODR = 0;
+
+    //UND = Nome Non Disponibile --> cerca di fare la registrazione ma l'username esiste già
+    static final int NND = 1;
+
+    //UGE = Utente Già Esistente --> cerca di fare la registrazione ma risulta che quell'utente è già registrato --> accesso automatico con quell
+    static final int UGE = 2;
+
+
+    //Codici per l'accesso 10 - 20
+
+    //ODA = Operazione di Accesso
+    static final int ODA = 10;
+
+    //UNT = Utente Non Trovato --> prova a fare l'accesso ma non risulta nessun utente con le credenziali inserite --> deve registrarsi o riprovare 
+    static final int UNT = 11;
+
+    //PNV = Password Non Valida --> prova a fare l'accesso, l'username esiste ma non la password --> deve inserire nuovamente la password
+    static final int PNV = 12; 
+
+
+
 
     static ServerSocket socketBenvenuto;
     static Vector<Socket> list_socket = new Vector<Socket>(0, 1);
@@ -58,5 +84,20 @@ public class server extends Thread {
     @Override
     public void run() {
         out.println("Inserisci un nome utente: ");
+        try {
+            //fin quando l'username non è disponibile
+            while (true) {
+                
+                String username = in.readLine().toLowerCase();
+                
+                
+                if(username != "") { //sostituire con nome recuperato dal file dei nomi
+                    out.println("Username: " + username + " disponibile");
+                    break;
+                }
+                else out.println();
+            }
+        } catch (IOException e) { System.out.println("Errore nella lettura dei file --> "+ e);}
+        
     }
 }    
