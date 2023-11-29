@@ -34,6 +34,11 @@ public class client extends Thread {
     //PNV = Password Non Valida --> prova a fare l'accesso, l'username esiste ma non la password --> deve inserire nuovamente la password
     static final int PNV = 12;
     
+    //Codice per procedere
+
+    //PRI = Prosegui --> prosegue nelle varie operazioni
+    static final int PRG = 69;
+
     public static void main(String[] args) throws IOException {
 
         Socket socket = new Socket();
@@ -56,8 +61,11 @@ public class client extends Thread {
         while (true) {
             String username = sc.next();
             out.println(username);
+            
+            
+            int codice = Integer.parseInt(in.readLine());
             //se il codice ricevuto dal server è uguale UGE mostrare "Username non disponibile" altrimenti break
-            if(Integer.parseInt(in.readLine()) == UGE){
+            if(codice == UGE){
                         System.out.print("Username non disponibile");
             }
             else break;
