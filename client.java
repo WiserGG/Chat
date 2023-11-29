@@ -44,6 +44,7 @@ public class client extends Thread {
         BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         PrintWriter out = new PrintWriter((new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))), true);
         
+        //primo messaggio del client che da conferma sull'apertura della connessione
         System.out.print(in.readLine());
         
         Scanner sc = new Scanner(System.in);
@@ -53,10 +54,10 @@ public class client extends Thread {
         //accedi(1) o registrati(2), se credenziali non corrette invio codice dal server al client, mostra il messaggio di errore (rimane su accesso, decidere carattere per tornare alla sceolta accesso/registrazione)
         //schermata grafica pulsante accedi/registrati, se non riesce ad accedere messaggio errore, possibilità di riprovare senza tornare alla schermata di scelta, con pulsante per tornare indietro se hanno sbagliato 
         while (true) {
-            String username = sc.nextLine();
-
-            //se UND==in.readline mostrare "Username non disponibile" altrimenti break
-            if(in.readLine().equals(0)){
+            String username = sc.next();
+            out.println(username);
+            //se il codice ricevuto dal server è uguale UGE mostrare "Username non disponibile" altrimenti break
+            if(Integer.parseInt(in.readLine()) == UGE){
                         System.out.print("Username non disponibile");
             }
             else break;
