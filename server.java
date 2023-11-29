@@ -35,7 +35,10 @@ public class server extends Thread {
     //PNV = Password Non Valida --> prova a fare l'accesso, l'username esiste ma non la password --> deve inserire nuovamente la password
     static final int PNV = 12; 
 
+    //Codice per procedere
 
+    //PRG = Prosegui --> prosegue nelle varie operazioni
+    static final int PRG = 69;
 
 
     static ServerSocket socketBenvenuto;
@@ -85,19 +88,28 @@ public class server extends Thread {
     public void run() {
         out.println("Inserisci un nome utente: ");
         try {
-            //fin quando l'username non è disponibile
             while (true) {
-                
-                String username = in.readLine().toLowerCase();
-                
-                
-                if(username != "") { //sostituire con nome recuperato dal file dei nomi
-                    out.println("Username: " + username + " disponibile");
-                    break;
+                int codice = Integer.parseInt(in.readLine());
+                switch (codice) {
+                    case ODR:
+                        //indica al client di proseguire con le proprie operazioni di registrazione
+                        out.print(PRG);
+                        Registrazione();
+                        break;
+                    case ODA:
+                        //indica al client di proseguire con le proprie operazioni di accesso
+                        out.print(PRG);
+                        Accesso();
+                    default:
+                        break;
                 }
-                else out.println();
             }
         } catch (IOException e) { System.out.println("Errore nella lettura dei file --> "+ e);}
-        
+    }
+
+    private void Accesso() {
+    }
+
+    private void Registrazione() {
     }
 }    
