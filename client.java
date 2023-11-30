@@ -2,11 +2,24 @@ import java.io.*;
 import java.net.*;
 import java.util.Scanner;
 
-/* il client si connette al server, il server chiede di inserire un nome utente, il client lo inserisce e lo manda indietro,
- * il server legge il nome utente e lo confronta con una lista di nomi utente che ha salvata in un file di teso, se dispononibile (
- * utilizzare un vettore può aiutare poichè ha il metodo contains()  ) lo salva e comunica che il nome utente è disponibile al cliente.
- * dopo questa operazione necessaria per tener traccia dei messaggi il server spedisce al cliente tutto lo storico dei messaggi 
+/* il client si connette al server, il client a seconda dell'operazione che vuole effettuare manda un codice STANDARD al server,
+ * quest'ultimo a seconda di cosa riceva elabora la risposta e ne restituisce un altro a sua volta che verrà poi gestito lato client
+ * per alleggerire il carico sul server.
+ * 
+ * --------------------------------------------
+ * Il server effettua i controlli sul nome utente e la password che è stata inviata dal client confrontandoli con una lista di nomi utente e password presenti in un file di testo.
+ * --------------------------------------------
+ * L'univocità di un utente è determinata dal fatto che nessun utente può avere il medesimo username o la medesima password (controllo rimuovibile).
+ * --------------------------------------------
+ * Ogni operazione che viene richiesta dal client viene elaborata e DEVE obbligatoriamente restituire un codice di STATO dell'operazione.
+ * --------------------------------------------
+ * Lo storico dei messaggi può essere restituito solo e SOLAMENTE SE l'operazione di registrazione o accesso sono TERMINATE
+ * --------------------------------------------
+ * Il backup dei messaggi viene effettuato ogni 1 minuto (può variare il tempo oppure a seconda dell'utilizzo della CPU)
+ * --------------------------------------------
+ * I messaggi inviati dal client verranno ritrasmessi a tutti gli utenti collegati ESCLUSO il mittente.
 */
+
 
 public class client extends Thread {
     static BufferedReader in;
@@ -18,9 +31,6 @@ public class client extends Thread {
 
     //UND = Nome Non Disponibile --> cerca di fare la registrazione ma l'username esiste già
     static final int NND = 1;
-
-    //UGE = Utente Già Esistente --> cerca di fare la registrazione ma risulta che quell'utente è già registrato --> accesso automatico con quell
-    static final int UGE = 2;
 
 
     //Codici per l'accesso 10 - 20
@@ -59,17 +69,21 @@ public class client extends Thread {
         //accedi(1) o registrati(2), se credenziali non corrette invio codice dal server al client, mostra il messaggio di errore (rimane su accesso, decidere carattere per tornare alla sceolta accesso/registrazione)
         //schermata grafica pulsante accedi/registrati, se non riesce ad accedere messaggio errore, possibilità di riprovare senza tornare alla schermata di scelta, con pulsante per tornare indietro se hanno sbagliato 
         while (true) {
-            String username = sc.next();
-            String password = sc.next();
-            
-            //da convertire
-            int ricordaPassword = sc.nextInt(); // true o false
-            
-            out.println(ODR);
+            //valore scelta accesso(1) o registrazione(2)
+            int ar= sc.nextInt();
 
-            out.println(username);
-            
-            
+            String username;
+            String password;
+            switch (ar) {
+                case 1:
+                    Acc();
+                    break;
+                case 2:
+                    out.print(PRG);
+                    Reg();
+                default:
+                    break;
+            }
             int codice = Integer.parseInt(in.readLine());
             //se il codice ricevuto dal server è uguale NND mostrare "Username non disponibile" altrimenti break
             if(codice == NND){
@@ -80,4 +94,28 @@ public class client extends Thread {
         }
     }
 
+    private static void Acc() {
+        Scanner input=new Scanner(System.in);
+        String username = input.next();
+        String password = input.next();
+    }
+
+    private static void Reg() {
+        Scanner input=new Scanner(System.in);
+        String username = input.next();
+        out.println(username);
+        try {
+            if(Integer.parseInt(in.readLine()) == NND){
+                System.out.println("Username non disponibile.");
+            }
+            else{
+                String password = input.next();
+                utente u=new utente(username, password);
+                out.println(u);
+            }
+        } catch (NumberFormatException e) {System.out.println(e);
+        }catch (IOException e) {System.out.println(e);}
+        String password = input.next();
+
+    }   
 }
