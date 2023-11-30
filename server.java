@@ -1,7 +1,6 @@
 import java.io.*;
 import java.net.*;
 import java.util.Vector;
-
 /* il client si connette al server, il server chiede di inserire un nome utente, il client lo inserisce e lo manda al server,
  * il server legge il nome utente e lo confronta con una lista di nomi utente che ha salvata in un file di testo, se dispononibile (
  * utilizzare un vettore può aiutare poichè ha il metodo contains()  ) lo salva e comunica che il nome utente è disponibile al client.
@@ -11,7 +10,6 @@ import java.util.Vector;
 public class server extends Thread {
     static final int port = 3000;
     static int counter_client = 0;
-    
     //Codici per la registrazione 0 - 9
 
     //ODR = Operazione di Registrazione
@@ -49,6 +47,8 @@ public class server extends Thread {
 
     public static void main(String[] args) throws IOException {
 
+        chatService Service = new chatService("Messaggi.txt", "backupMessaggi.bak");
+        
         //creazione socket server
         socketBenvenuto = new ServerSocket();
 

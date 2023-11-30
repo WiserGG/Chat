@@ -7,7 +7,7 @@
 
 public class utente {
     private String username;
-    private String password;
+    private String password; //generata automaticamente?
     private boolean ricordaPassword;
 
     //costruttore utilizzato per inviare i dati al server o per memorizzare l'utente al server
