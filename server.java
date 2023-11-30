@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
 import java.util.Vector;
 
 /* il client si connette al server, il client a seconda dell'operazione che vuole effettuare manda un codice STANDARD al server,
@@ -60,10 +61,11 @@ public class server extends Thread {
 
     public static void main(String[] args) throws IOException {
 
-        chatService Service = new chatService("Messaggi.txt", "backupMessaggi.bak");
         
         //creazione socket server
         socketBenvenuto = new ServerSocket();
+        new chatService();
+        
 
         //bind del server socket all'indirizzo ip del pc e ad una porta specifica
         socketBenvenuto.bind(new InetSocketAddress(InetAddress.getLocalHost(), port));
@@ -106,7 +108,6 @@ public class server extends Thread {
                 switch (codice) {
                     case ODR:
                         //indica al client di proseguire con le proprie operazioni di registrazione
-                        out.print(PRG);
                         Registrazione();
                         break;
                     case ODA:
@@ -121,8 +122,17 @@ public class server extends Thread {
     }
 
     private void Accesso() {
+
     }
 
     private void Registrazione() {
+        try {
+            String username = in.readLine();
+            //recupero tutti gli username dal file e lo confronto con quello ricevuto
+            
+            //se è uguale ad un altro spedisco il codice NND
+            
+            //out.println(NND);
+        } catch (IOException e) { System.out.println(e); }
     }
 }    

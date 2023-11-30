@@ -60,12 +60,19 @@ public class client extends Thread {
         //schermata grafica pulsante accedi/registrati, se non riesce ad accedere messaggio errore, possibilità di riprovare senza tornare alla schermata di scelta, con pulsante per tornare indietro se hanno sbagliato 
         while (true) {
             String username = sc.next();
+            String password = sc.next();
+            
+            //da convertire
+            int ricordaPassword = sc.nextInt(); // true o false
+            
+            out.println(ODR);
+
             out.println(username);
             
             
             int codice = Integer.parseInt(in.readLine());
-            //se il codice ricevuto dal server è uguale UGE mostrare "Username non disponibile" altrimenti break
-            if(codice == UGE){
+            //se il codice ricevuto dal server è uguale NND mostrare "Username non disponibile" altrimenti break
+            if(codice == NND){
                         System.out.print("Username non disponibile");
             }
             else break;
