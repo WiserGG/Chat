@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.*;
-import java.nio.file.Files;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -61,7 +60,7 @@ public class server extends Thread {
         
         //creazione socket server
         socketBenvenuto = new ServerSocket();
-        new chatService();
+        new Service();
         
 
         //bind del server socket all'indirizzo ip del pc e ad una porta specifica
@@ -136,7 +135,7 @@ public class server extends Thread {
     private int Registrazione() {
         try {
             String username = in.readLine();
-            BufferedReader fIN = new BufferedReader(new FileReader(chatService.userList));
+            BufferedReader fIN = new BufferedReader(new FileReader(Service.userList));
             boolean disponibile = false;
             
             //recupero tutti gli username dal file e lo confronto con quello ricevuto
@@ -183,7 +182,7 @@ public class server extends Thread {
 
     public static void AggionrnaUserList(String utente){
         try {
-            PrintWriter fOUT = new PrintWriter(new FileWriter(chatService.userList));
+            PrintWriter fOUT = new PrintWriter(new FileWriter(Service.userList));
             //inseriamo l'utente al fine della lista
             fOUT.println(utente);
             fOUT.close();

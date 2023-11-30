@@ -52,12 +52,12 @@ public class client extends Thread {
     public static void main(String[] args) throws IOException {
 
         Socket socket = new Socket();
-        socket.connect(new InetSocketAddress(InetAddress.getByName("zuzu.sytes.net"), 3000));
+        socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 3000));
         System.out.println("Client Socket: "+ socket);
 
         //creazione stream di input e output 
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        PrintWriter out = new PrintWriter((new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))), true);
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()), true);
         
         //primo messaggio del client che da conferma sull'apertura della connessione
         System.out.print(in.readLine());
@@ -65,13 +65,13 @@ public class client extends Thread {
         Scanner sc = new Scanner(System.in);
 
         String rispostaDefault;
-
         //accedi(1) o registrati(2), se credenziali non corrette invio codice dal server al client, mostra il messaggio di errore (rimane su accesso, decidere carattere per tornare alla sceolta accesso/registrazione)
         //schermata grafica pulsante accedi/registrati, se non riesce ad accedere messaggio errore, possibilità di riprovare senza tornare alla schermata di scelta, con pulsante per tornare indietro se hanno sbagliato 
         while (true) {
+            
             //valore scelta accesso(1) o registrazione(2)
-            int ar= sc.nextInt();
-
+            System.out.println("1) Accesso\t2) Registrazione");
+            int ar = sc.nextInt();
             String username;
             String password;
             switch (ar) {
@@ -79,18 +79,11 @@ public class client extends Thread {
                     Acc();
                     break;
                 case 2:
-                    out.print(PRG);
+                    
                     Reg();
                 default:
                     break;
             }
-            int codice = Integer.parseInt(in.readLine());
-            //se il codice ricevuto dal server è uguale NND mostrare "Username non disponibile" altrimenti break
-            if(codice == NND){
-                        System.out.print("Username non disponibile");
-            }
-            else break;
-            
         }
     }
 
@@ -102,16 +95,20 @@ public class client extends Thread {
 
     private static void Reg() {
         Scanner input=new Scanner(System.in);
-        String username = input.next();
+        System.out.print("Inserisci un username: ");
+        String username = input.nextLine();
+        out.println(ODR);
         out.println(username);
         try {
             if(Integer.parseInt(in.readLine()) == NND){
                 System.out.println("Username non disponibile.");
+                Reg();
             }
             else{
                 String password = input.next();
                 utente u=new utente(username, password);
                 out.println(u);
+                
             }
         } catch (NumberFormatException e) {System.out.println(e);
         }catch (IOException e) {System.out.println(e);}
