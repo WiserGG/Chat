@@ -1,12 +1,6 @@
 import java.io.*;
 import java.net.*;
 import java.util.Vector;
-<<<<<<< HEAD
-/* il client si connette al server, il server chiede di inserire un nome utente, il client lo inserisce e lo manda al server,
- * il server legge il nome utente e lo confronta con una lista di nomi utente che ha salvata in un file di testo, se dispononibile (
- * utilizzare un vettore può aiutare poichè ha il metodo contains()  ) lo salva e comunica che il nome utente è disponibile al client.
- * dopo questa operazione necessaria per tener traccia dei messaggi il server spedisce al client tutto lo storico dei messaggi 
-=======
 
 /* il client si connette al server, il client a seconda dell'operazione che vuole effettuare manda un codice STANDARD al server,
  * quest'ultimo a seconda di cosa riceva elabora la risposta e ne restituisce un altro a sua volta che verrà poi gestito lato client
@@ -24,7 +18,6 @@ import java.util.Vector;
  * Il backup dei messaggi viene effettuato ogni 1 minuto (può variare il tempo oppure a seconda dell'utilizzo della CPU)
  * --------------------------------------------
  * I messaggi inviati dal client verranno ritrasmessi a tutti gli utenti collegati ESCLUSO il mittente.
->>>>>>> ba9822ac4e2e8da96019ad542e60de746d8aacb0
 */
 
 public class server extends Thread {
