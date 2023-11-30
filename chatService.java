@@ -20,6 +20,7 @@ public class chatService {
      */
     static File originale = new File("Messaggi.txt");
     static File backup = new File("backupMessaggi.bak");
+    static File userList = new File("userList.txt");
 
     public static void Backup() {
         try {
