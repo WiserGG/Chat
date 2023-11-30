@@ -1,8 +1,7 @@
 /* questa classe salva il nome utente, dopo conferma del server.
  * Le sue funzioni sono:
  * salvare le informazioni dell'utente che potrebbero essere usate per effettuare il login automatico o non
- * se la variabile booleana ricordaPassword è true non dovrà inserirla per effettuare l'accesso, dovrà utilizzare
- * solamente l'username che è univoco per ogni utente 
+ * dovrà utilizzare solamente l'username che è univoco per ogni utente 
 */
 
 public class utente {
