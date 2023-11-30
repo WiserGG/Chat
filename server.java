@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
+import java.util.StringTokenizer;
 import java.util.Vector;
 
 /* il client si connette al server, il client a seconda dell'operazione che vuole effettuare manda un codice STANDARD al server,
@@ -10,7 +11,7 @@ import java.util.Vector;
  * --------------------------------------------
  * Il server effettua i controlli sul nome utente e la password che è stata inviata dal client confrontandoli con una lista di nomi utente e password presenti in un file di testo.
  * --------------------------------------------
- * L'univocità di un utente è determinata dal fatto che nessun utente può avere il medesimo username o la medesima password (controllo rimuovibile).
+ * L'univocità di un utente è determinata dal fatto che nessun utente può avere il medesimo username.
  * --------------------------------------------
  * Ogni operazione che viene richiesta dal client viene elaborata e DEVE obbligatoriamente restituire un codice di STATO dell'operazione.
  * --------------------------------------------
@@ -29,11 +30,8 @@ public class server extends Thread {
     //ODR = Operazione di Registrazione
     static final int ODR = 0;
 
-    //UND = Nome Non Disponibile --> cerca di fare la registrazione ma l'username esiste già
+    //NND = Nome Non Disponibile --> cerca di fare la registrazione ma l'username esiste già
     static final int NND = 1;
-
-    //UGE = Utente Già Esistente --> cerca di fare la registrazione ma risulta che quell'utente è già registrato --> accesso automatico con quell
-    static final int UGE = 2;
 
 
     //Codici per l'accesso 10 - 20
@@ -57,7 +55,6 @@ public class server extends Thread {
     static Vector<Socket> list_socket = new Vector<Socket>(0, 1);
     BufferedReader in;
     PrintWriter out;
-    
 
     public static void main(String[] args) throws IOException {
 
@@ -108,15 +105,26 @@ public class server extends Thread {
                 switch (codice) {
                     case ODR:
                         //indica al client di proseguire con le proprie operazioni di registrazione
-                        Registrazione();
+                        codice = Registrazione();
+                        if(codice == NND) out.println(NND);
+                        
+                        //il nome utente è disponibile, aggiorniamo la lista utenti e ritorniamo il valore PRG
+                        else if(codice == PRG){
+                            AggionrnaUserList(in.readLine());
+                            //utente inserito, lo comunico al server
+                            out.println(PRG);
+                        }
                         break;
                     case ODA:
                         //indica al client di proseguire con le proprie operazioni di accesso
                         out.print(PRG);
                         Accesso();
+                        break;
                     default:
                         break;
                 }
+                //operazione di accesso o registrazione conclusa, si esce dal ciclo, il server ora può inviare lo storico dei messaggi
+                if(codice == PRG) break;
             }
         } catch (IOException e) { System.out.println("Errore nella lettura dei file --> "+ e);}
     }
@@ -125,14 +133,61 @@ public class server extends Thread {
 
     }
 
-    private void Registrazione() {
+    private int Registrazione() {
         try {
             String username = in.readLine();
+            BufferedReader fIN = new BufferedReader(new FileReader(chatService.userList));
+            boolean disponibile = false;
+            
             //recupero tutti gli username dal file e lo confronto con quello ricevuto
+            String dati = fIN.readLine();
+
+            while(dati != null){
+                byte n_token = 0;
+                StringTokenizer st = new StringTokenizer(dati, "-");
+                while (st.hasMoreTokens()) {
+                    String token = st.nextToken();
+                    n_token++;
+                    //token 1 corrisponde al nome utente
+                    if(n_token == 1){
+                        /*
+                         * se l'username è diverso da quello estrapolato in quel momento e in quella
+                         * riga impostiamo "disponibile" su true, se risulta già utilizzato interrompiamo
+                         * la lettura del file e lo comunichiamo al client
+                        */
+                        if(!username.equals(token)) {
+                            disponibile = true;
+                            break;
+                        }
+                        else {
+                            disponibile = false;
+                            break;
+                        }
+                    }
+                }
+                //leggiamo la prossima riga del file
+                dati = fIN.readLine();
+            }
             
-            //se è uguale ad un altro spedisco il codice NND
-            
-            //out.println(NND);
+            //chiusura del lettore del file
+            fIN.close();
+
+            //l'username NON è disponibile e ritorniamo il valore NND
+            if(!disponibile) return NND;
+
+            return PRG;
+
+        } catch (IOException e) { System.out.println(e); }
+        return 0;
+    }
+
+    public static void AggionrnaUserList(String utente){
+        try {
+            PrintWriter fOUT = new PrintWriter(new FileWriter(chatService.userList));
+            //inseriamo l'utente al fine della lista
+            fOUT.println(utente);
+            fOUT.close();
         } catch (IOException e) { System.out.println(e); }
     }
+
 }    
