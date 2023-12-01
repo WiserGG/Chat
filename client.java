@@ -41,9 +41,6 @@ public class client extends Thread {
     //UNT = Utente Non Trovato --> prova a fare l'accesso ma non risulta nessun utente con le credenziali inserite --> deve registrarsi o riprovare 
     static final int UNT = 11;
 
-    //PNV = Password Non Valida --> prova a fare l'accesso, l'username esiste ma non la password --> deve inserire nuovamente la password
-    static final int PNV = 12;
-    
     //Codice per procedere
 
     //PRI = Prosegui --> prosegue nelle varie operazioni
@@ -52,15 +49,12 @@ public class client extends Thread {
     public static void main(String[] args) throws IOException {
 
         Socket socket = new Socket();
-        socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 3000));
+        socket.connect(new InetSocketAddress(InetAddress.getByName("zuzu.sytes.net"), 3000));
         System.out.println("Client Socket: "+ socket);
 
         //creazione stream di input e output 
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()), true);
-        
-        //primo messaggio del client che da conferma sull'apertura della connessione
-        System.out.print(in.readLine());
         
         Scanner sc = new Scanner(System.in);
 
@@ -79,8 +73,8 @@ public class client extends Thread {
                     Acc();
                     break;
                 case 2:
-                    
                     Reg();
+                    System.out.println("Registrazione effettuata.");
                 default:
                     break;
             }
@@ -89,8 +83,28 @@ public class client extends Thread {
 
     private static void Acc() {
         Scanner input=new Scanner(System.in);
-        String username = input.next();
-        String password = input.next();
+        String username = input.nextLine();
+        String password = input.nextLine();
+        try {
+            if(Integer.parseInt(in.readLine()) == UNT){
+                System.out.println("Utente o Password errata.");
+                System.out.println("1) Registrazione\t2) Riprova");
+                int ar = input.nextInt();
+                switch (ar) {
+                    case 1:
+                        Reg();
+                        System.out.println("Registrazione effettuata.");
+                    break;
+                    case 2:
+                        Acc();
+                    default:
+                        break;
+                }
+            }else{
+                System.out.print("Accesso effettuato.");
+            }
+        } catch (NumberFormatException e) {System.out.println(e);
+        } catch (IOException e) {System.out.println(e);}
     }
 
     private static void Reg() {
@@ -105,13 +119,12 @@ public class client extends Thread {
                 Reg();
             }
             else{
-                String password = input.next();
+                System.out.println("Crea password:");
+                String password = input.nextLine();
                 out.println(password);
-                
             }
         } catch (NumberFormatException e) {System.out.println(e);
         }catch (IOException e) {System.out.println(e);}
-        String password = input.next();
 
     }   
 }
