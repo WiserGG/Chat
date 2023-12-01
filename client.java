@@ -71,7 +71,6 @@ public class client extends Thread {
             switch (ar) {
                 case 1:
                     Acc();
-                    break;
                 case 2:
                     Reg();
                     System.out.println("Registrazione effettuata.");
@@ -83,7 +82,9 @@ public class client extends Thread {
 
     private static void Acc() {
         Scanner input=new Scanner(System.in);
+        System.out.println("Inserire username:");
         String username = input.nextLine();
+        System.out.println("Inserire password:");
         String password = input.nextLine();
         try {
             if(Integer.parseInt(in.readLine()) == UNT){
