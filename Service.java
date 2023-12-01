@@ -70,13 +70,13 @@ public class Service {
             Date date = new Date(DateFormat.LONG);
             fOUT.println(date+" "+messaggio);
             fOUT.close();
-        } catch (Exception e) { System.out.println("Errore nel ripristino del file: "+e); }
+        } catch (Exception e) { System.out.println("Errore nella scrittura del messaggio nel file: "+e); }
     }
     
     public static void AggionrnaUserList(String utente){
         try {
             PrintWriter fOUT = new PrintWriter(new FileWriter(Service.userList));
-            //inseriamo l'utente al fine della lista
+            //inseriamo l'utente alla fine della lista
             fOUT.println(utente);
             fOUT.close();
         } catch (IOException e) { System.out.println(e); }

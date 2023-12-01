@@ -54,7 +54,7 @@ public class server extends Thread {
     static Vector<Socket> list_socket = new Vector<Socket>(0, 1);
     BufferedReader in;
     PrintWriter out;
-
+    utente user;
     public static void main(String[] args) throws IOException {
 
         //creazione socket server
@@ -99,6 +99,7 @@ public class server extends Thread {
         Socket mittente = list_socket.elementAt(counter_client++);
         out.println("Inserisci un nome utente: ");
         try {
+            //blocco che gestisce l'accesso o la registrazione
             while (true) {
                 int codice = Integer.parseInt(in.readLine());
                 switch (codice) {
@@ -109,8 +110,10 @@ public class server extends Thread {
                         
                         //il nome utente è disponibile, aggiorniamo la lista utenti e ritorniamo il valore PRG
                         else if(codice == PRG){
-                            Service.AggionrnaUserList(in.readLine());
-                            //utente inserito, lo comunico al server
+                            String password = in.readLine();
+                            user.setPassword(password);
+                            Service.AggionrnaUserList(user.toString());
+                            //utente inserito, lo comunico al client
                             out.println(PRG);
                         }
                         break;
@@ -161,7 +164,7 @@ public class server extends Thread {
                 out.println(dati);
                 dati = fIN.readLine();
                 //se la nuova riga letta è null allora non ci sono più messaggi da leggere e inviare
-                if(dati == null) out.println("Tutti i messaggi presenti nello storico sono stati recuperati\n");
+                if(dati == null) out.println("\nTutti i messaggi presenti nello storico sono stati recuperati\n");
             }
             fIN.close();
         }catch (Exception e) { System.out.println(e); }
@@ -195,6 +198,7 @@ public class server extends Thread {
                         */
                         if(!username.equals(token)) {
                             disponibile = true;
+                            user = new utente(username);
                             break;
                         }
                         else {

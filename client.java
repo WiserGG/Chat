@@ -106,8 +106,7 @@ public class client extends Thread {
             }
             else{
                 String password = input.next();
-                utente u=new utente(username, password);
-                out.println(u);
+                out.println(password);
                 
             }
         } catch (NumberFormatException e) {System.out.println(e);
