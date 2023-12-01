@@ -58,7 +58,6 @@ public class client extends Thread {
         
         Scanner sc = new Scanner(System.in);
 
-        String rispostaDefault;
         //accedi(1) o registrati(2), se credenziali non corrette invio codice dal server al client, mostra il messaggio di errore (rimane su accesso, decidere carattere per tornare alla sceolta accesso/registrazione)
         //schermata grafica pulsante accedi/registrati, se non riesce ad accedere messaggio errore, possibilità di riprovare senza tornare alla schermata di scelta, con pulsante per tornare indietro se hanno sbagliato 
         while (true) {
@@ -66,8 +65,6 @@ public class client extends Thread {
             //valore scelta accesso(1) o registrazione(2)
             System.out.println("1) Accesso\t2) Registrazione");
             int ar = sc.nextInt();
-            String username;
-            String password;
             switch (ar) {
                 case 1:
                     Acc();
@@ -77,6 +74,7 @@ public class client extends Thread {
                 default:
                     break;
             }
+            
         }
     }
 
@@ -84,8 +82,10 @@ public class client extends Thread {
         Scanner input=new Scanner(System.in);
         System.out.println("Inserire username:");
         String username = input.nextLine();
+        out.println(username);
         System.out.println("Inserire password:");
         String password = input.nextLine();
+        out.println(password);
         try {
             if(Integer.parseInt(in.readLine()) == UNT){
                 System.out.println("Utente o Password errata.");
@@ -95,9 +95,10 @@ public class client extends Thread {
                     case 1:
                         Reg();
                         System.out.println("Registrazione effettuata.");
-                    break;
+                        break;
                     case 2:
                         Acc();
+                        break;
                     default:
                         break;
                 }
