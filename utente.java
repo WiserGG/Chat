@@ -25,6 +25,6 @@ public class utente {
     //utilizzato dal server per effettuare lavor
     @Override
     public String toString() {
-        return username + "-" + password + "-";
+        return username + "-" + password;
     }
 }

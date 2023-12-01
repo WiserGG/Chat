@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.sql.Date;
+import java.text.DateFormat;
 
 public class Service {
     /*
@@ -35,6 +37,7 @@ public class Service {
                 originale.createNewFile();
                 System.out.println("File originale dello storico dei messaggi creato");
             }
+            else System.out.println("File originale dello storico dei messaggi già esistente");
 
             if(!userList.exists()){
                 userList.createNewFile();
@@ -43,7 +46,7 @@ public class Service {
                 fOUT.println(new utente("admin", "admin"));
                 fOUT.close();
             }
-            else System.out.println("File già esistente");
+            else System.out.println("File userList già esistente");
         } catch (IOException e) { System.out.println(e); }
     }
 
@@ -64,8 +67,18 @@ public class Service {
     public static void ScriviMessaggio(String messaggio) {
         try {
             PrintWriter fOUT = new PrintWriter(new FileWriter(Service.userList));
-            fOUT.println(messaggio);
+            Date date = new Date(DateFormat.LONG);
+            fOUT.println(date+" "+messaggio);
             fOUT.close();
         } catch (Exception e) { System.out.println("Errore nel ripristino del file: "+e); }
+    }
+    
+    public static void AggionrnaUserList(String utente){
+        try {
+            PrintWriter fOUT = new PrintWriter(new FileWriter(Service.userList));
+            //inseriamo l'utente al fine della lista
+            fOUT.println(utente);
+            fOUT.close();
+        } catch (IOException e) { System.out.println(e); }
     }
 }

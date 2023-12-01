@@ -57,7 +57,6 @@ public class server extends Thread {
 
     public static void main(String[] args) throws IOException {
 
-        
         //creazione socket server
         socketBenvenuto = new ServerSocket();
         new Service();
@@ -87,9 +86,8 @@ public class server extends Thread {
         //creazione dello Input/Output stream per la lettura e scrittura dei messaggi
         in = new BufferedReader(new InputStreamReader(client_socket.getInputStream()));
         out = new PrintWriter((new BufferedWriter(new OutputStreamWriter(client_socket.getOutputStream()))), true);
-        ++counter_client;
         list_socket.add(client_socket);
-        
+
         //sgancia e parte il thread
         start();
         System.out.println("Thread n." + counter_client +" sganciato");
@@ -97,6 +95,8 @@ public class server extends Thread {
 
     @Override
     public void run() {
+        //recuperiamo il client socket e aumentiamo il contatore dei client connessi
+        Socket mittente = list_socket.elementAt(counter_client++);
         out.println("Inserisci un nome utente: ");
         try {
             while (true) {
@@ -109,7 +109,7 @@ public class server extends Thread {
                         
                         //il nome utente è disponibile, aggiorniamo la lista utenti e ritorniamo il valore PRG
                         else if(codice == PRG){
-                            AggionrnaUserList(in.readLine());
+                            Service.AggionrnaUserList(in.readLine());
                             //utente inserito, lo comunico al server
                             out.println(PRG);
                         }
@@ -125,7 +125,46 @@ public class server extends Thread {
                 //operazione di accesso o registrazione conclusa, si esce dal ciclo, il server ora può inviare lo storico dei messaggi
                 if(codice == PRG) break;
             }
-        } catch (IOException e) { System.out.println("Errore nella lettura dei file --> "+ e);}
+        } catch (IOException e) { System.out.println(e);}
+
+        //fase per inviare lo storico dei messaggi al client
+        InviaDati();
+
+        //invio dei messaggi in arrivo da un client in broadcast
+        while (true) {
+            try {
+                //leggiamo il messaggio ricevuto dal client e salviamolo
+                String messaggio = in.readLine();
+                //chiamiamo la funzione per scrivere il messaggio arrivato nello storico
+                Service.ScriviMessaggio(messaggio);
+                //per ogni socket destinatario diverso dal mittente mandiamo il messaggio in broadcast
+                for (Socket destinatario : list_socket) {
+                    if(mittente != destinatario){
+                        new PrintWriter(destinatario.getOutputStream()).println(messaggio);
+                    }
+                }
+            } catch (IOException e) { System.out.println(e); }
+        }
+    }
+
+    public void InviaDati() {
+        try {
+            BufferedReader fIN = new BufferedReader(new FileReader(Service.originale));
+            
+            String dati = fIN.readLine();
+
+            //se non ci sono messaggi allora è stata appena creata la chat
+            if(dati == null) out.println("Nessun messaggio presente nello storico, manda un messaggio per primo!");
+            
+            //per ogni riga viene inviato un messaggio, se non ci sono messaggi non entrerà mai nel ciclo while poichè dati = null
+            while(dati != null){
+                out.println(dati);
+                dati = fIN.readLine();
+                //se la nuova riga letta è null allora non ci sono più messaggi da leggere e inviare
+                if(dati == null) out.println("Tutti i messaggi presenti nello storico sono stati recuperati\n");
+            }
+            fIN.close();
+        }catch (Exception e) { System.out.println(e); }
     }
 
     private void Accesso() {
@@ -179,14 +218,4 @@ public class server extends Thread {
         } catch (IOException e) { System.out.println(e); }
         return 0;
     }
-
-    public static void AggionrnaUserList(String utente){
-        try {
-            PrintWriter fOUT = new PrintWriter(new FileWriter(Service.userList));
-            //inseriamo l'utente al fine della lista
-            fOUT.println(utente);
-            fOUT.close();
-        } catch (IOException e) { System.out.println(e); }
-    }
-
 }    
