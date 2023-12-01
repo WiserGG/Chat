@@ -66,7 +66,7 @@ public class Service {
 
     public static void ScriviMessaggio(String messaggio) {
         try {
-            PrintWriter fOUT = new PrintWriter(new FileWriter(Service.userList));
+            PrintWriter fOUT = new PrintWriter(new FileWriter(Service.userList, true), true);
             Date date = new Date(DateFormat.LONG);
             fOUT.println(date+" "+messaggio);
             fOUT.close();
@@ -75,9 +75,9 @@ public class Service {
     
     public static void AggionrnaUserList(String utente){
         try {
-            PrintWriter fOUT = new PrintWriter(new FileWriter(Service.userList));
+            PrintWriter fOUT = new PrintWriter(new FileWriter(userList, true), true);
             //inseriamo l'utente alla fine della lista
-            fOUT.println(utente);
+            fOUT.append(utente);
             fOUT.close();
         } catch (IOException e) { System.out.println(e); }
     }

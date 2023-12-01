@@ -38,11 +38,8 @@ public class server extends Thread {
     //ODA = Operazione di Accesso
     static final int ODA = 10;
 
-    //UNT = Utente Non Trovato --> prova a fare l'accesso ma non risulta nessun utente con le credenziali inserite --> deve registrarsi o riprovare 
+    //UNT = Utente Non Trovato --> prova a fare l'accesso ma non risulta nessun utente con le credenziali inserite --> deve registrarsi riprovare 
     static final int UNT = 11;
-
-    //PNV = Password Non Valida --> prova a fare l'accesso, l'username esiste ma non la password --> deve inserire nuovamente la password
-    static final int PNV = 12; 
 
     //Codice per procedere
 
@@ -97,30 +94,29 @@ public class server extends Thread {
     public void run() {
         //recuperiamo il client socket e aumentiamo il contatore dei client connessi
         Socket mittente = list_socket.elementAt(counter_client++);
-        out.println("Inserisci un nome utente: ");
         try {
             //blocco che gestisce l'accesso o la registrazione
             while (true) {
                 int codice = Integer.parseInt(in.readLine());
+                System.out.println(codice);
                 switch (codice) {
                     case ODR:
                         //indica al client di proseguire con le proprie operazioni di registrazione
                         codice = Registrazione();
+                        System.out.println(codice);
                         if(codice == NND) out.println(NND);
                         
                         //il nome utente è disponibile, aggiorniamo la lista utenti e ritorniamo il valore PRG
                         else if(codice == PRG){
+                            out.println(PRG);
                             String password = in.readLine();
                             user.setPassword(password);
                             Service.AggionrnaUserList(user.toString());
-                            //utente inserito, lo comunico al client
-                            out.println(PRG);
                         }
                         break;
                     case ODA:
-                        //indica al client di proseguire con le proprie operazioni di accesso
-                        out.print(PRG);
-                        Accesso();
+                        if(Accesso()) out.println(PRG);
+
                         break;
                     default:
                         break;
@@ -170,8 +166,45 @@ public class server extends Thread {
         }catch (Exception e) { System.out.println(e); }
     }
 
-    private void Accesso() {
+    public boolean Accesso() {
+        boolean x = false;
+        String username = null, password = null;
+        try {
+            String username_client = in.readLine();
+            String password_client = in.readLine();
+            BufferedReader fIN = new BufferedReader(new FileReader(Service.userList));
+            String dati = in.readLine();
 
+            while (dati != null) {
+                byte n_token = 1;
+                StringTokenizer st = new StringTokenizer(dati, "-");
+                while (st.hasMoreTokens()) {
+                    String token = st.nextToken();
+                    //token 1 corrisponde al nome utente
+                    if(n_token == 1){
+                        username = token;
+                    }
+                    //token 2 corrisponde alla password
+                    if(n_token == 2){
+                        password = token;
+                    }
+                    n_token++;
+                }
+
+                if((password_client == password) && (username_client == username)){
+                    out.println(PRG);
+                    x = true;
+                    break;
+                }
+                else x = false;
+
+                //leggiamo la prossima riga del file
+                dati = fIN.readLine();
+            }
+            //chiusura del lettore del file
+            fIN.close();
+        } catch (IOException e) { System.out.println(e); }
+        return x; 
     }
 
     private int Registrazione() {
