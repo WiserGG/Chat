@@ -57,14 +57,14 @@ public class Service extends Thread {
                 else {
                     userList.createNewFile();
                     System.out.println("File userList creato");
+                    PrintWriter fOUT = new PrintWriter(new FileWriter(Service.userList));
+                    fOUT.println(new utente("admin", "admin"));
+                    fOUT.close();
                 }
                 /*inseriamo una riga nel file in maniera tale da consentire la lettura lato server,
                  * l'username e la password scelti non sono casuali ma vanno a ridurre le possibilità
                  * che qualcuno provi a impersonificare un admin del gruppo
                  */
-                PrintWriter fOUT = new PrintWriter(new FileWriter(Service.userList));
-                fOUT.println(new utente("admin", "admin"));
-                fOUT.close();
             }
             else System.out.println("File userList già esistente");
 
