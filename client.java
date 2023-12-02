@@ -49,7 +49,9 @@ public class client extends Thread {
     public static void main(String[] args) throws IOException {
 
         Socket socket = new Socket();
-        socket.connect(new InetSocketAddress(InetAddress.getByName("zuzu.sytes.net"), 3000));
+                                            //InetAddress.getByName("zuzu.sytes.net")
+                                            //InetAddress.getLocalHost()
+        socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 3000));
         System.out.println("Client Socket: "+ socket);
 
         //creazione stream di input e output 
@@ -60,26 +62,45 @@ public class client extends Thread {
 
         //accedi(1) o registrati(2), se credenziali non corrette invio codice dal server al client, mostra il messaggio di errore (rimane su accesso, decidere carattere per tornare alla sceolta accesso/registrazione)
         //schermata grafica pulsante accedi/registrati, se non riesce ad accedere messaggio errore, possibilità di riprovare senza tornare alla schermata di scelta, con pulsante per tornare indietro se hanno sbagliato 
+        
+        //valore scelta accesso(1) o registrazione(2)
+        System.out.println("1) Accesso\t2) Registrazione");
+        int ar = sc.nextInt();
+        switch (ar) {
+            case 1:
+                if(Acc() == PRG) System.out.println("Accesso effettuato");
+                break;
+            case 2:
+                Reg();
+                System.out.println("Registrazione effettuata.");
+                break;
+            default:
+                break;
+        }
+        //accesso o registrazione conclusa, preleviamo lo storico dei messaggi
+        new client();
+
+    }
+
+
+    public client() {
+        start();
+    }
+
+    //il thread è in costante lettura di messaggi in arrivo dal server
+    @Override
+    public void run() {
         while (true) {
-            //valore scelta accesso(1) o registrazione(2)
-            System.out.println("1) Accesso\t2) Registrazione");
-            int ar = sc.nextInt();
-            switch (ar) {
-                case 1:
-                    Acc();
-                    System.out.println("Accesso effettuato");
-                case 2:
-                    Reg();
-                    System.out.println("Registrazione effettuata.");
-                default:
-                    break;
-            }
-            
+            try {
+                System.out.println(in.readLine());
+            } catch (IOException e) { System.out.println("Errore nella lettura del messaggio: "+e); }
         }
     }
 
-    private static void Acc() {
+
+    private static int Acc() {
         int codice = 0;
+        out.println(ODA);
         Scanner input=new Scanner(System.in);
         System.out.print("Inserire username:");
         String username = input.nextLine();
@@ -89,12 +110,15 @@ public class client extends Thread {
         out.println(password);
         try {
             while (true) {
-                if(Integer.parseInt(in.readLine()) == UNT){
+                codice = Integer.parseInt(in.readLine());
+                System.out.println(codice); 
+                if(codice == UNT){
                     System.out.println("Utente o Password errata.");
                     System.out.println("1) Registrazione\t2) Riprova");
                     int ar = input.nextInt();
                     switch (ar) {
                         case 1:
+                            out.println(ODR);
                             codice = Reg();
                             System.out.println("Registrazione effettuata.");
                             break;
@@ -105,12 +129,13 @@ public class client extends Thread {
                             break;
                     }
                 }
-                else break;
-                if(codice == PRG) break;
+                else return PRG;
             }
         } 
         catch (NumberFormatException e) {System.out.println(e); } 
         catch (IOException e) {System.out.println(e);}
+        
+        return PRG;
     }
 
     private static int Reg() {

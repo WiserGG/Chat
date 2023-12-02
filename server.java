@@ -116,7 +116,7 @@ public class server extends Thread {
                             codice = PRG;
                             out.println(codice);
                         } 
-                        else out.println(NND);
+                        else out.println(UNT);
                         break;
                     default:
                         break;
@@ -148,7 +148,7 @@ public class server extends Thread {
 
     public void InviaDati() {
         try {
-            BufferedReader fIN = new BufferedReader(new FileReader(Service.originale));
+            BufferedReader fIN = new BufferedReader(new FileReader(Service.messaggi));
             
             String dati = fIN.readLine();
 
@@ -174,7 +174,7 @@ public class server extends Thread {
             String username_client = in.readLine();
             String password_client = in.readLine();
             BufferedReader fIN = new BufferedReader(new FileReader(Service.userList));
-            String dati = in.readLine();
+            String dati = fIN.readLine();
 
             //iniziamo a leggere le righe della userList e facciamo dei controlli sia sulla password che sull'esername
             while (dati != null) {
@@ -185,8 +185,7 @@ public class server extends Thread {
                 }
 
                 //credenziali corrette, lo comunichiamo al client
-                if((password_client == password) && (username_client == username)){
-                    out.println(PRG);
+                if((password_client.equals(password)) && (username_client.equals(username))){
                     x = true;
                     //se abbiamo trovato l'utente usciamo dal ciclo con break
                     break;
