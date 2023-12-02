@@ -1,3 +1,5 @@
+//FINITO
+
 /* questa classe salva il nome utente, dopo conferma del server.
  * Le sue funzioni sono:
  * salvare le informazioni dell'utente che potrebbero essere usate per effettuare il login automatico o non
