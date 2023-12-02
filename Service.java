@@ -26,6 +26,7 @@ public class Service extends Thread {
     static File originale = new File("Messaggi.txt");
     static File backup = new File("backupMessaggi.bak");
     static File userList = new File("userList.txt");
+    static File backupUserList = new File("backupUserList.txt");
 
     /*alla creazione dell'oggetto di tipo Service si controlla se il file degli utenti esiste, in caso viene creato
      * e aggiunto automaticamente una riga per garantire che la lettura nel file possa avvenire.
@@ -34,14 +35,32 @@ public class Service extends Thread {
     public Service() {
         try {
             if(!originale.exists()){
-                originale.createNewFile();
-                System.out.println("File originale dello storico dei messaggi creato");
+                if(backup.exists()){
+                    Ripristina();  
+                    System.out.println("File originale dello storico dei messaggi ripristinato dal file di backup");
+                }
+                //crea un nuovo file vuoto
+                else {
+                    originale.createNewFile();
+                    System.out.println("File originale dello storico dei messaggi creato");
+                }
             }
             else System.out.println("File originale dello storico dei messaggi già esistente");
 
             if(!userList.exists()){
-                userList.createNewFile();
-                System.out.println("File userList creata");
+                if(backupUserList.exists()){
+                    RipristinaUserList();
+                    System.out.println("File originale userList ripristinato dal file di backup");
+                }
+                //crea un nuovo file vuoto
+                else {
+                    userList.createNewFile();
+                    System.out.println("File userList creato");
+                }
+                /*inseriamo una riga nel file in maniera tale da consentire la lettura lato server,
+                 * l'username e la password scelti non sono casuali ma vanno a ridurre le possibilità
+                 * che qualcuno provi a impersonificare un admin del gruppo
+                 */
                 PrintWriter fOUT = new PrintWriter(new FileWriter(Service.userList));
                 fOUT.println(new utente("admin", "admin"));
                 fOUT.close();
@@ -59,13 +78,20 @@ public class Service extends Thread {
         try {
             sleep(20000);
             Backup();
+            BackupUserList();
         } catch (InterruptedException e) { System.out.println(e); }
     }
 
     public static void Backup() {
         try {
             Files.copy(originale.toPath(), backup.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            System.out.println("File di backup creato");
+            System.out.println("File dei messaggi di backup creato");
+        } catch (IOException e) { System.out.println("Errore nel backup del file: "+ e); }
+    }
+    public static void BackupUserList() {
+        try {
+            Files.copy(userList.toPath(), backupUserList.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("File userList di backup creato");
         } catch (IOException e) { System.out.println("Errore nel backup del file: "+ e); }
     }
 
@@ -73,6 +99,13 @@ public class Service extends Thread {
         try {
             Files.copy(backup.toPath(), originale.toPath(), StandardCopyOption.REPLACE_EXISTING);
             System.out.println("File d'origine ripristinato");
+        } catch (IOException e) { System.out.println("Errore nel ripristino del file: "+e); }
+    }
+    
+    public static void RipristinaUserList() {
+        try {
+            Files.copy(backupUserList.toPath(), userList.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("File userList d'origine ripristinato");
         } catch (IOException e) { System.out.println("Errore nel ripristino del file: "+e); }
     }
 
