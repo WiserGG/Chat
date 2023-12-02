@@ -6,7 +6,6 @@ import java.util.Vector;
 /* il client si connette al server, il client a seconda dell'operazione che vuole effettuare manda un codice STANDARD al server,
  * quest'ultimo a seconda di cosa riceva elabora la risposta e ne restituisce un altro a sua volta che verrà poi gestito lato client
  * per alleggerire il carico sul server.
- * 
  * --------------------------------------------
  * Il server effettua i controlli sul nome utente e la password che è stata inviata dal client confrontandoli con una lista di nomi utente e password presenti in un file di testo.
  * --------------------------------------------
@@ -16,7 +15,7 @@ import java.util.Vector;
  * --------------------------------------------
  * Lo storico dei messaggi può essere restituito solo e SOLAMENTE SE l'operazione di registrazione o accesso sono TERMINATE
  * --------------------------------------------
- * Il backup dei messaggi viene effettuato ogni 1 minuto (può variare il tempo oppure a seconda dell'utilizzo della CPU)
+ * Il backup dei messaggi viene effettuato ogni 20 secondi (può variare il tempo oppure a seconda dell'utilizzo della CPU)
  * --------------------------------------------
  * I messaggi inviati dal client verranno ritrasmessi a tutti gli utenti collegati ESCLUSO il mittente.
 */
@@ -46,19 +45,16 @@ public class server extends Thread {
     //PRG = Prosegui --> prosegue nelle varie operazioni
     static final int PRG = 69;
 
-
     static ServerSocket socketBenvenuto;
     static Vector<Socket> list_socket = new Vector<Socket>(0, 1);
     BufferedReader in;
     PrintWriter out;
     utente user;
     public static void main(String[] args) throws IOException {
-
         //creazione socket server
         socketBenvenuto = new ServerSocket();
         new Service();
         
-
         //bind del server socket all'indirizzo ip del pc e ad una porta specifica
         socketBenvenuto.bind(new InetSocketAddress(InetAddress.getLocalHost(), port));
         System.out.println("Server socket: "+ socketBenvenuto.getLocalSocketAddress());
@@ -115,8 +111,12 @@ public class server extends Thread {
                         }
                         break;
                     case ODA:
-                        if(Accesso()) out.println(PRG);
-
+                        if(Accesso()){
+                            //ci salviamo il valore del codice poichè servirà successivamente
+                            codice = PRG;
+                            out.println(codice);
+                        } 
+                        else out.println(NND);
                         break;
                     default:
                         break;
@@ -135,11 +135,11 @@ public class server extends Thread {
                 //leggiamo il messaggio ricevuto dal client e salviamolo
                 String messaggio = in.readLine();
                 //chiamiamo la funzione per scrivere il messaggio arrivato nello storico
-                Service.ScriviMessaggio(messaggio);
+                Service.ScriviMessaggio(user.getUsername()+": "+messaggio);
                 //per ogni socket destinatario diverso dal mittente mandiamo il messaggio in broadcast
                 for (Socket destinatario : list_socket) {
                     if(mittente != destinatario){
-                        new PrintWriter(destinatario.getOutputStream()).println(messaggio);
+                        new PrintWriter(destinatario.getOutputStream()).println(user.getUsername()+" "+messaggio);
                     }
                 }
             } catch (IOException e) { System.out.println(e); }
@@ -170,30 +170,25 @@ public class server extends Thread {
         boolean x = false;
         String username = null, password = null;
         try {
+            //leggiamo sia la password che l'username
             String username_client = in.readLine();
             String password_client = in.readLine();
             BufferedReader fIN = new BufferedReader(new FileReader(Service.userList));
             String dati = in.readLine();
 
+            //iniziamo a leggere le righe della userList e facciamo dei controlli sia sulla password che sull'esername
             while (dati != null) {
-                byte n_token = 1;
                 StringTokenizer st = new StringTokenizer(dati, "-");
                 while (st.hasMoreTokens()) {
-                    String token = st.nextToken();
-                    //token 1 corrisponde al nome utente
-                    if(n_token == 1){
-                        username = token;
-                    }
-                    //token 2 corrisponde alla password
-                    if(n_token == 2){
-                        password = token;
-                    }
-                    n_token++;
+                    username = st.nextToken();
+                    password = st.nextToken();
                 }
 
+                //credenziali corrette, lo comunichiamo al client
                 if((password_client == password) && (username_client == username)){
                     out.println(PRG);
                     x = true;
+                    //se abbiamo trovato l'utente usciamo dal ciclo con break
                     break;
                 }
                 else x = false;
@@ -204,6 +199,7 @@ public class server extends Thread {
             //chiusura del lettore del file
             fIN.close();
         } catch (IOException e) { System.out.println(e); }
+        //terminata la lettura del file, la funzione ritornerà true se è stato trovato, false altrimenti
         return x; 
     }
 
