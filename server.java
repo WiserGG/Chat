@@ -83,7 +83,7 @@ public class server extends Thread {
 
         //sgancia e parte il thread
         start();
-        System.out.println("Thread n." + counter_client +" sganciato");
+        System.out.println("Thread n." + counter_client+1 +" sganciato");
     }
 
     @Override
@@ -101,7 +101,6 @@ public class server extends Thread {
                         codice = Registrazione();
                         System.out.println(codice);
                         if(codice == NND) out.println(NND);
-                        
                         //il nome utente è disponibile, aggiorniamo la lista utenti e ritorniamo il valore PRG
                         else if(codice == PRG){
                             out.println(PRG);
@@ -124,27 +123,42 @@ public class server extends Thread {
                 //operazione di accesso o registrazione conclusa, si esce dal ciclo, il server ora può inviare lo storico dei messaggi
                 if(codice == PRG) break;
             }
-        } catch (IOException e) { System.out.println(e);}
 
-        //fase per inviare lo storico dei messaggi al client
-        InviaDati();
+            //fase per inviare lo storico dei messaggi al client
+            InviaDati();
+            out.println("Utenti online: "+ counter_client);
+            BroadCast(mittente, user, "si e' connesso alla chat\nUtenti online: "+ counter_client);
+            //invio dei messaggi in arrivo da un client in broadcast
+            while (true) {
+                try {
+                    //leggiamo il messaggio ricevuto dal client e salviamolo
+                    String messaggio = in.readLine();
+                    //chiamiamo la funzione per scrivere il messaggio arrivato nello storico
+                    Service.ScriviMessaggio(user.getUsername()+": "+messaggio);
+                    BroadCast(mittente, user, messaggio);
+                } catch (IOException e) { System.out.println(e); }
+            }
+        }
+        catch ( SocketException e) {
+            System.out.println("Il client "+mittente.getLocalSocketAddress()+" si è disconnesso");
+            list_socket.removeElement(mittente);
+            counter_client--;
+            BroadCast(mittente, user, "si e' disconnesso\nUtenti online: "+ counter_client);
+        }
+        catch ( IOException e){ System.out.println(e);}
+    }
 
-        //invio dei messaggi in arrivo da un client in broadcast
-        while (true) {
-            try {
-                //leggiamo il messaggio ricevuto dal client e salviamolo
-                String messaggio = in.readLine();
-                //chiamiamo la funzione per scrivere il messaggio arrivato nello storico
-                Service.ScriviMessaggio(user.getUsername()+": "+messaggio);
-                //per ogni socket destinatario diverso dal mittente mandiamo il messaggio in broadcast
-                for (Socket destinatario : list_socket) {
-                    if(mittente != destinatario){
-                        new PrintWriter(destinatario.getOutputStream()).println(user.getUsername()+" "+messaggio);
-                    }
-                }
-            } catch (IOException e) { System.out.println(e); }
+    public static void BroadCast(Socket mittente, utente user, String messaggio) {
+        //per ogni socket destinatario diverso dal mittente mandiamo il messaggio in broadcast
+        for (Socket destinatario : list_socket) {
+            if(mittente != destinatario){
+                try {
+                    new PrintWriter(destinatario.getOutputStream()).println(user.getUsername()+" "+messaggio);
+                } catch (IOException e) { System.out.println(e); }
+            }
         }
     }
+
 
     public void InviaDati() {
         try {
