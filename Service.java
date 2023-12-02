@@ -17,7 +17,7 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Date;
 import java.text.DateFormat;
 
-public class Service {
+public class Service extends Thread {
     /*
      * assegno a originale e backup un oggetto di tipo file che come parametri ha il percorso dei file "Messaggi.txt" e "backupMessaggi.bak",
      * quest'ultimi verranno utilizzati successivamente per eseguire operazioni su quei file direttamente tramite la classe "Files"
@@ -47,7 +47,19 @@ public class Service {
                 fOUT.close();
             }
             else System.out.println("File userList già esistente");
+
+            start();
         } catch (IOException e) { System.out.println(e); }
+    }
+
+    //thread che gestisce il backup periodico in maniera automatica
+    @Override
+    public void run() {
+        //ogni 20000 ms = 20 s chiama la funzione per effettuare il backup
+        try {
+            sleep(20000);
+            Backup();
+        } catch (InterruptedException e) { System.out.println(e); }
     }
 
     public static void Backup() {
@@ -67,7 +79,7 @@ public class Service {
     public static void ScriviMessaggio(String messaggio) {
         try {
             PrintWriter fOUT = new PrintWriter(new FileWriter(Service.userList, true), true);
-            Date date = new Date(DateFormat.LONG);
+            Date date = new Date(DateFormat.SHORT);
             fOUT.println(date+" "+messaggio);
             fOUT.close();
         } catch (Exception e) { System.out.println("Errore nella scrittura del messaggio nel file: "+e); }
