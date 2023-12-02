@@ -80,6 +80,11 @@ public class client extends Thread {
         //accesso o registrazione conclusa, preleviamo lo storico dei messaggi
         new client();
 
+
+
+        
+        sc.close();
+        socket.close();
     }
 
 
@@ -134,6 +139,7 @@ public class client extends Thread {
         } 
         catch (NumberFormatException e) {System.out.println(e); } 
         catch (IOException e) {System.out.println(e);}
+        input.close();
     }
 
     private static void Reg() {
@@ -154,5 +160,6 @@ public class client extends Thread {
         } 
         catch (NumberFormatException e) {System.out.println(e); }
         catch (IOException e) {System.out.println(e);}
-    }   
+        input.close();
+    }
 }
