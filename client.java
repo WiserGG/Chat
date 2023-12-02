@@ -61,13 +61,13 @@ public class client extends Thread {
         //accedi(1) o registrati(2), se credenziali non corrette invio codice dal server al client, mostra il messaggio di errore (rimane su accesso, decidere carattere per tornare alla sceolta accesso/registrazione)
         //schermata grafica pulsante accedi/registrati, se non riesce ad accedere messaggio errore, possibilità di riprovare senza tornare alla schermata di scelta, con pulsante per tornare indietro se hanno sbagliato 
         while (true) {
-            
             //valore scelta accesso(1) o registrazione(2)
             System.out.println("1) Accesso\t2) Registrazione");
             int ar = sc.nextInt();
             switch (ar) {
                 case 1:
                     Acc();
+                    System.out.println("Accesso effettuato");
                 case 2:
                     Reg();
                     System.out.println("Registrazione effettuata.");
@@ -79,37 +79,41 @@ public class client extends Thread {
     }
 
     private static void Acc() {
+        int codice = 0;
         Scanner input=new Scanner(System.in);
-        System.out.println("Inserire username:");
+        System.out.print("Inserire username:");
         String username = input.nextLine();
         out.println(username);
-        System.out.println("Inserire password:");
+        System.out.print("Inserire password:");
         String password = input.nextLine();
         out.println(password);
         try {
-            if(Integer.parseInt(in.readLine()) == UNT){
-                System.out.println("Utente o Password errata.");
-                System.out.println("1) Registrazione\t2) Riprova");
-                int ar = input.nextInt();
-                switch (ar) {
-                    case 1:
-                        Reg();
-                        System.out.println("Registrazione effettuata.");
-                        break;
-                    case 2:
-                        Acc();
-                        break;
-                    default:
-                        break;
+            while (true) {
+                if(Integer.parseInt(in.readLine()) == UNT){
+                    System.out.println("Utente o Password errata.");
+                    System.out.println("1) Registrazione\t2) Riprova");
+                    int ar = input.nextInt();
+                    switch (ar) {
+                        case 1:
+                            codice = Reg();
+                            System.out.println("Registrazione effettuata.");
+                            break;
+                        case 2:
+                            Acc();
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }else{
-                System.out.print("Accesso effettuato.");
+                else break;
+                if(codice == PRG) break;
             }
-        } catch (NumberFormatException e) {System.out.println(e);
-        } catch (IOException e) {System.out.println(e);}
+        } 
+        catch (NumberFormatException e) {System.out.println(e); } 
+        catch (IOException e) {System.out.println(e);}
     }
 
-    private static void Reg() {
+    private static int Reg() {
         Scanner input=new Scanner(System.in);
         System.out.print("Inserisci un username: ");
         String username = input.nextLine();
@@ -125,8 +129,9 @@ public class client extends Thread {
                 String password = input.nextLine();
                 out.println(password);
             }
-        } catch (NumberFormatException e) {System.out.println(e);
-        }catch (IOException e) {System.out.println(e);}
-
+        } 
+        catch (NumberFormatException e) {System.out.println(e); }
+        catch (IOException e) {System.out.println(e);}
+        return PRG;
     }   
 }
