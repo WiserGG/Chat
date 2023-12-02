@@ -19,29 +19,30 @@ import java.text.DateFormat;
 
 public class Service extends Thread {
     /*
-     * assegno a originale e backup un oggetto di tipo file che come parametri ha il percorso dei file "Messaggi.txt" e "backupMessaggi.bak",
+     * assegno a messaggi e backup un oggetto di tipo file che come parametri ha il percorso dei file "Messaggi.txt" e "backupMessaggi.bak",
      * quest'ultimi verranno utilizzati successivamente per eseguire operazioni su quei file direttamente tramite la classe "Files"
      * i percorsi vengono inseriti come stringhe e poi convertiti in un "abstract pathname" quindi percorso astratto
      */
-    static File originale = new File("Messaggi.txt");
+    static File messaggi = new File("Messaggi.txt");
     static File backup = new File("backupMessaggi.bak");
     static File userList = new File("userList.txt");
     static File backupUserList = new File("backupUserList.txt");
 
+    //FINITO
     /*alla creazione dell'oggetto di tipo Service si controlla se il file degli utenti esiste, in caso viene creato
      * e aggiunto automaticamente una riga per garantire che la lettura nel file possa avvenire.
      * La stessa operazione deve avvenire per il file originale dello storico dei messaggi
     */
     public Service() {
         try {
-            if(!originale.exists()){
+            if(!messaggi.exists()){
                 if(backup.exists()){
                     Ripristina();  
                     System.out.println("File originale dello storico dei messaggi ripristinato dal file di backup");
                 }
                 //crea un nuovo file vuoto
                 else {
-                    originale.createNewFile();
+                    messaggi.createNewFile();
                     System.out.println("File originale dello storico dei messaggi creato");
                 }
             }
@@ -71,37 +72,41 @@ public class Service extends Thread {
         } catch (IOException e) { System.out.println(e); }
     }
 
+    //FINITO
     //thread che gestisce il backup periodico in maniera automatica
     @Override
     public void run() {
         //ogni 20000 ms = 20 s chiama la funzione per effettuare il backup
         try {
+            while (true) {
             sleep(20000);
             Backup();
-            BackupUserList();
+            BackupUserList();    
+            }
         } catch (InterruptedException e) { System.out.println(e); }
     }
-
+    //FINITO
     public static void Backup() {
         try {
-            Files.copy(originale.toPath(), backup.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(messaggi.toPath(), backup.toPath(), StandardCopyOption.REPLACE_EXISTING);
             System.out.println("File dei messaggi di backup creato");
         } catch (IOException e) { System.out.println("Errore nel backup del file: "+ e); }
     }
+    //FINITO
     public static void BackupUserList() {
         try {
             Files.copy(userList.toPath(), backupUserList.toPath(), StandardCopyOption.REPLACE_EXISTING);
             System.out.println("File userList di backup creato");
         } catch (IOException e) { System.out.println("Errore nel backup del file: "+ e); }
     }
-
+    //FINITO
     public static void Ripristina() {
         try {
-            Files.copy(backup.toPath(), originale.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(backup.toPath(), messaggi.toPath(), StandardCopyOption.REPLACE_EXISTING);
             System.out.println("File d'origine ripristinato");
         } catch (IOException e) { System.out.println("Errore nel ripristino del file: "+e); }
     }
-    
+    //FINITO
     public static void RipristinaUserList() {
         try {
             Files.copy(backupUserList.toPath(), userList.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -111,7 +116,7 @@ public class Service extends Thread {
 
     public static void ScriviMessaggio(String messaggio) {
         try {
-            PrintWriter fOUT = new PrintWriter(new FileWriter(Service.userList, true), true);
+            PrintWriter fOUT = new PrintWriter(new FileWriter(messaggi, true), true);
             Date date = new Date(DateFormat.SHORT);
             fOUT.println(date+" "+messaggio);
             fOUT.close();
