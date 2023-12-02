@@ -226,7 +226,8 @@ public class server extends Thread {
                         */
                         if(!username.equals(token)) {
                             disponibile = true;
-                            user = new utente(username);
+                            user = new utente();
+                            user.setUsername(username);
                             break;
                         }
                         else {

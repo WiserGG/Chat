@@ -68,7 +68,7 @@ public class client extends Thread {
         int ar = sc.nextInt();
         switch (ar) {
             case 1:
-                if(Acc() == PRG) System.out.println("Accesso effettuato");
+                Acc();
                 break;
             case 2:
                 Reg();
@@ -98,7 +98,7 @@ public class client extends Thread {
     }
 
 
-    private static int Acc() {
+    private static void Acc() {
         int codice = 0;
         out.println(ODA);
         Scanner input=new Scanner(System.in);
@@ -119,7 +119,7 @@ public class client extends Thread {
                     switch (ar) {
                         case 1:
                             out.println(ODR);
-                            codice = Reg();
+                            Reg();
                             System.out.println("Registrazione effettuata.");
                             break;
                         case 2:
@@ -129,20 +129,17 @@ public class client extends Thread {
                             break;
                     }
                 }
-                else return PRG;
+                else System.out.println("Accesso effettuato");
             }
         } 
         catch (NumberFormatException e) {System.out.println(e); } 
         catch (IOException e) {System.out.println(e);}
-        
-        return PRG;
     }
 
-    private static int Reg() {
+    private static void Reg() {
         Scanner input=new Scanner(System.in);
         System.out.print("Inserisci un username: ");
         String username = input.nextLine();
-        out.println(ODR);
         out.println(username);
         try {
             if(Integer.parseInt(in.readLine()) == NND){
@@ -150,13 +147,12 @@ public class client extends Thread {
                 Reg();
             }
             else{
-                System.out.println("Crea password:");
+                System.out.print("Crea password: ");
                 String password = input.nextLine();
                 out.println(password);
             }
         } 
         catch (NumberFormatException e) {System.out.println(e); }
         catch (IOException e) {System.out.println(e);}
-        return PRG;
     }   
 }
