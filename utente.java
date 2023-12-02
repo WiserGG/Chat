@@ -16,9 +16,7 @@ public class utente {
         this.password = password;
     }
 
-    public utente(String username) {
-        this.username = username;
-    }
+    public utente() { }
 
     public String getUsername() {
         return username;
