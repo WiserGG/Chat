@@ -118,7 +118,7 @@ public class Service extends Thread {
         try {
             PrintWriter fOUT = new PrintWriter(new FileWriter(messaggi, true), true);
             Date date = new Date(DateFormat.SHORT);
-            fOUT.println(date+" "+messaggio);
+            fOUT.append(date.toString()+" "+messaggio);
             fOUT.close();
         } catch (Exception e) { System.out.println("Errore nella scrittura del messaggio nel file: "+e); }
     }
@@ -127,7 +127,7 @@ public class Service extends Thread {
         try {
             PrintWriter fOUT = new PrintWriter(new FileWriter(userList, true), true);
             //inseriamo l'utente alla fine della lista
-            fOUT.append(utente);
+            fOUT.println(utente);
             fOUT.close();
         } catch (IOException e) { System.out.println(e); }
     }

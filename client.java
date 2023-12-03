@@ -83,8 +83,7 @@ public class client extends Thread {
 
 
         
-        sc.close();
-        socket.close();
+        sc.close();    
     }
 
 
@@ -97,7 +96,7 @@ public class client extends Thread {
     public void run() {
         while (true) {
             try {
-                System.out.println(in.readLine());
+                System.out.println((String)in.readLine());
             } catch (IOException e) { System.out.println("Errore nella lettura del messaggio: "+e); }
         }
     }
@@ -143,6 +142,7 @@ public class client extends Thread {
     }
 
     private static void Reg() {
+        out.println(ODR);
         Scanner input=new Scanner(System.in);
         System.out.print("Inserisci un username: ");
         String username = input.nextLine();
