@@ -145,7 +145,10 @@ public class client extends Thread {
                             break;
                     }
                 }
-                else System.out.println("Accesso effettuato");
+                else {
+                    System.out.println("Accesso effettuato");
+                    break;
+                }
             }
         } 
         catch (NumberFormatException e) {System.out.println(e); } 
