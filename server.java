@@ -45,6 +45,9 @@ public class server extends Thread {
     //PRG = Prosegui --> prosegue nelle varie operazioni
     static final int PRG = 69;
 
+    //Codici per la disconnessione
+    static final int EXIT = 71;
+
     static ServerSocket socketBenvenuto;
     static Vector<Socket> list_socket = new Vector<Socket>(0, 1);
     BufferedReader in;
@@ -80,8 +83,9 @@ public class server extends Thread {
     
     public static void ChiudiClientSocket(Socket mittente, utente user){
         System.out.println("Il client "+mittente.getLocalSocketAddress()+" si è disconnesso");
-        BroadCast(mittente, user, "si e' disconnesso\nUtenti online: "+ counter_client--);
+        BroadCast(mittente, user, "si e' disconnesso\nUtenti online: "+ --counter_client);
         list_socket.removeElement(mittente);
+        list_socket.trimToSize();
     }
 
     public server(Socket client_socket) throws IOException {
@@ -136,12 +140,14 @@ public class server extends Thread {
             //fase per inviare lo storico dei messaggi al client
             InviaDati();
             out.println("Utenti online: "+ counter_client);
+            System.out.println("prima di broadcasdt");
             BroadCast(mittente, user, "si e' connesso alla chat\nUtenti online: "+ counter_client);
             //invio dei messaggi in arrivo da un client in broadcast
             while (true) {
                 try {
                     //leggiamo il messaggio ricevuto dal client e salviamolo
                     String messaggio = in.readLine();
+                    if(Integer.parseInt(messaggio) == EXIT) ChiudiClientSocket(mittente, user);
                     //chiamiamo la funzione per scrivere il messaggio arrivato nello storico
                     Service.ScriviMessaggio(user.getUsername()+": "+messaggio);
                     
@@ -160,15 +166,12 @@ public class server extends Thread {
     }
 
     public static void BroadCast(Socket mittente, utente user, String messaggio) {
-        //se è presente solo un utente in chat il messaggio non viene mandato in broadcast
-        if(list_socket.size() > 1){
-            //per ogni socket destinatario diverso dal mittente mandiamo il messaggio in broadcast
-            for (Socket destinatario : list_socket) {
-                if(mittente != destinatario){
-                    try {
-                        new PrintWriter(destinatario.getOutputStream()).println(user.getUsername()+" "+messaggio);
-                    } catch (IOException e) { System.out.println(e); }
-                }
+        //per ogni socket destinatario diverso dal mittente mandiamo il messaggio in broadcast
+        for (Socket destinatario : list_socket) {
+            if(mittente != destinatario){
+                try {
+                    new PrintWriter(destinatario.getOutputStream()).println(user.getUsername()+" "+messaggio);
+                } catch (IOException e) { System.out.println(e); }
             }
         }
     }
@@ -215,6 +218,7 @@ public class server extends Thread {
                 //credenziali corrette, lo comunichiamo al client
                 if((password_client.equals(password)) && (username_client.equals(username))){
                     x = true;
+                    user = new utente(username, password);
                     //se abbiamo trovato l'utente usciamo dal ciclo con break
                     break;
                 }
