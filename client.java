@@ -43,15 +43,17 @@ public class client extends Thread {
 
     //Codice per procedere
 
-    //PRI = Prosegui --> prosegue nelle varie operazioni
+    //PRG = Prosegui --> prosegue nelle varie operazioni
     static final int PRG = 69;
 
+    //EXIT --> chiude la chat
+    static final int EXIT = 71;
     public static void main(String[] args) throws IOException {
 
         Socket socket = new Socket();
                                             //InetAddress.getByName("zuzu.sytes.net")
                                             //InetAddress.getLocalHost()
-        socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 3000));
+        socket.connect(new InetSocketAddress(InetAddress.getByName("zuzu.sytes.net"), 3000));
         System.out.println("Client Socket: "+ socket);
 
         //creazione stream di input e output 
@@ -79,11 +81,21 @@ public class client extends Thread {
         }
         //accesso o registrazione conclusa, preleviamo lo storico dei messaggi
         new client();
-
-
-
-        
-        sc.close();    
+        Scanner input=new Scanner(System.in);
+        while (true) {
+            String messaggio=input.nextLine();
+            if(messaggio.startsWith("/")){
+                if(messaggio.toLowerCase().equals("/close")){
+                    System.out.println("Sicuro di voler chiudere la comunicazione?(s/n)");
+                    String risp=input.nextLine().toLowerCase();
+                    if(risp.equals("s")){
+                        out.println(EXIT);
+                        socket.close();
+                    }
+                }
+            }
+            out.println(messaggio); 
+        }
     }
 
 
