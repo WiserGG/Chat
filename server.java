@@ -46,7 +46,7 @@ public class server extends Thread {
     static final int PRG = 69;
 
     //Codici per la disconnessione
-    static final int EXIT = 71;
+    static final String EXIT = "71";
 
     static ServerSocket socketBenvenuto;
     static Vector<Socket> list_socket = new Vector<Socket>(0, 1);
@@ -83,7 +83,7 @@ public class server extends Thread {
     
     public static void ChiudiClientSocket(Socket mittente, utente user){
         System.out.println("Il client "+mittente.getLocalSocketAddress()+" si è disconnesso");
-        BroadCast(mittente, user, "si e' disconnesso\nUtenti online: "+ --counter_client);
+        BroadCast(mittente, user, ("si e' disconnesso\nUtenti online: "+ --counter_client));
         list_socket.removeElement(mittente);
         list_socket.trimToSize();
     }
@@ -141,15 +141,19 @@ public class server extends Thread {
             InviaDati();
             out.println("Utenti online: "+ counter_client);
             System.out.println("prima di broadcasdt");
-            BroadCast(mittente, user, "si e' connesso alla chat\nUtenti online: "+ counter_client);
+            BroadCast(mittente, user, ("si e' connesso alla chat\nUtenti online: "+ counter_client));
             //invio dei messaggi in arrivo da un client in broadcast
             while (true) {
                 try {
                     //leggiamo il messaggio ricevuto dal client e salviamolo
                     String messaggio = in.readLine();
-                    if(Integer.parseInt(messaggio) == EXIT) ChiudiClientSocket(mittente, user);
+                    if(messaggio.equals(EXIT)){
+                        ChiudiClientSocket(mittente, user);
+                        out.println(EXIT);
+                        break;
+                    } 
                     //chiamiamo la funzione per scrivere il messaggio arrivato nello storico
-                    Service.ScriviMessaggio(user.getUsername()+": "+messaggio);
+                    else Service.ScriviMessaggio(user.getUsername()+": "+messaggio);
                     
                     BroadCast(mittente, user, messaggio);
                 } catch ( SocketException e) { 
@@ -170,7 +174,7 @@ public class server extends Thread {
         for (Socket destinatario : list_socket) {
             if(mittente != destinatario){
                 try {
-                    new PrintWriter(destinatario.getOutputStream()).println(user.getUsername()+" "+messaggio);
+                    new PrintWriter(destinatario.getOutputStream(), true).println("Server: "+user.getUsername()+": "+messaggio);
                 } catch (IOException e) { System.out.println(e); }
             }
         }
