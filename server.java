@@ -82,8 +82,8 @@ public class server extends Thread {
     }
     
     public static void ChiudiClientSocket(Socket mittente, utente user){
-        System.out.println("Il client "+mittente.getLocalSocketAddress()+" si è disconnesso");
-        BroadCast(mittente, user, ("si e' disconnesso\nUtenti online: "+ --counter_client));
+        System.out.println("Il client "+mittente.getLocalSocketAddress()+" si è disconnesso".toUpperCase());
+        BroadCast(mittente, user, ("si e' disconnesso\nUtenti online: ".toUpperCase()+ --counter_client));
         list_socket.removeElement(mittente);
         list_socket.trimToSize();
     }
@@ -139,9 +139,8 @@ public class server extends Thread {
 
             //fase per inviare lo storico dei messaggi al client
             InviaDati();
-            out.println("Utenti online: "+ counter_client);
-            System.out.println("prima di broadcasdt");
-            BroadCast(mittente, user, ("si e' connesso alla chat\nUtenti online: "+ counter_client));
+            out.println("Utenti online: ".toUpperCase()+ counter_client);
+            BroadCast(mittente, user, ("si e' connesso alla chat\nUtenti online: ".toUpperCase()+ counter_client));
             //invio dei messaggi in arrivo da un client in broadcast
             while (true) {
                 try {
@@ -174,7 +173,7 @@ public class server extends Thread {
         for (Socket destinatario : list_socket) {
             if(mittente != destinatario){
                 try {
-                    new PrintWriter(destinatario.getOutputStream(), true).println("Server: "+user.getUsername()+": "+messaggio);
+                    new PrintWriter(destinatario.getOutputStream(), true).println(user.getUsername()+": "+messaggio);
                 } catch (IOException e) { System.out.println(e); }
             }
         }
