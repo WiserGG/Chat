@@ -47,10 +47,12 @@ public class client extends Thread {
     static final int PRG = 69;
 
     //EXIT --> chiude la chat
-    static final int EXIT = 71;
+    static final String EXIT = "71";
+
+    static Socket socket;
     public static void main(String[] args) throws IOException {
 
-        Socket socket = new Socket();
+        socket = new Socket();
                                             //InetAddress.getByName("zuzu.sytes.net")
                                             //InetAddress.getLocalHost()
         socket.connect(new InetSocketAddress(InetAddress.getByName("zuzu.sytes.net"), 3000));
@@ -90,11 +92,11 @@ public class client extends Thread {
                     String risp=input.nextLine().toLowerCase();
                     if(risp.equals("s")){
                         out.println(EXIT);
-                        socket.close();
+                        break;
                     }
                 }
             }
-            out.println(messaggio); 
+            else out.println(messaggio); 
         }
     }
 
@@ -108,7 +110,12 @@ public class client extends Thread {
     public void run() {
         while (true) {
             try {
-                System.out.println((String)in.readLine());
+                String messaggio=in.readLine();
+                if(messaggio.equals(EXIT)){
+                    socket.close();
+                    break;
+                }
+                else System.out.println(messaggio);
             } catch (IOException e) { System.out.println("Errore nella lettura del messaggio: "+e); }
         }
     }
@@ -153,7 +160,6 @@ public class client extends Thread {
         } 
         catch (NumberFormatException e) {System.out.println(e); } 
         catch (IOException e) {System.out.println(e);}
-        input.close();
     }
 
     private static void Reg() {
@@ -175,6 +181,5 @@ public class client extends Thread {
         } 
         catch (NumberFormatException e) {System.out.println(e); }
         catch (IOException e) {System.out.println(e);}
-        input.close();
     }
 }
