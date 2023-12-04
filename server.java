@@ -50,6 +50,7 @@ public class server extends Thread {
 
     static ServerSocket socketBenvenuto;
     static Vector<Socket> list_socket = new Vector<Socket>(0, 1);
+    static Vector<String> list_userOnline = new Vector<String>(0, 1);
     BufferedReader in;
     PrintWriter out;
     utente user;
@@ -137,6 +138,14 @@ public class server extends Thread {
                 if(codice == PRG) break;
             }
 
+            for (String userOnline : list_userOnline) {
+                if(user.getUsername() == userOnline){
+                    System.out.println("Utente già connesso con un altro dispositivo, disconnessione forzata in corso");
+                    mittente.close();
+                    break;
+                } 
+            }
+
             //fase per inviare lo storico dei messaggi al client
             InviaDati();
             out.println("Utenti online: ".toUpperCase()+ counter_client);
@@ -164,7 +173,7 @@ public class server extends Thread {
         catch ( SocketException e) {
             ChiudiClientSocket(mittente, user);
         }
-        catch ( IOException e){ System.out.println(e);}
+        catch ( IOException e){ System.out.println("Client disconnesso");}
     }
 
     public static void BroadCast(Socket mittente, utente user, String messaggio) {
