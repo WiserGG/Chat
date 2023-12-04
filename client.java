@@ -102,14 +102,12 @@ public class client extends Thread {
                                 break;
                             }
                         }while(risp!="s" && risp!="n");
-                        
                     }
                 }
                 else out.println(messaggio); 
             }
         } catch (SocketException e) { System.out.println("Disconnessione improvvisa avvenuta con il server: "+ e);}
     }
-
 
     public client() {
         start();
@@ -127,9 +125,9 @@ public class client extends Thread {
                         break;
                     }
                     else System.out.println(messaggio);
-                } catch (IOException e) { System.out.println("Errore nella lettura del messaggio: "+e); }
+                } catch (SocketException e) { System.out.println("Disconnessione temporanea con il server, impossibile leggere i messaggi: "+ e); }
             }
-        } catch (Exception e) { System.out.println("Disconnessione temporanea con il server, impossibile leggere i messaggi: "+ e);}
+        } catch (IOException e) { System.out.println("Errore nella lettura del messaggio: "+e);}
     }
 
 
@@ -156,7 +154,7 @@ public class client extends Thread {
                     
                         switch (ar) {
                             case 1:
-                                Reg();
+                                codice = Reg();
                                 System.out.println("Registrazione effettuata.");
                                 break;
                             case 2:
@@ -167,17 +165,18 @@ public class client extends Thread {
                         }
                     }while(ar!=1 && ar!=2); 
                 }
-                else {
+                else{
                     System.out.println("Accesso effettuato");
                     break;
                 }
+                if(codice == PRG) break;
             }
         } 
         catch (NumberFormatException e) {System.out.println(e); } 
         catch (IOException e) {System.out.println(e);}
     }
 
-    private static void Reg() {
+    private static int Reg() {
         out.println(ODR);
         Scanner input=new Scanner(System.in);
         System.out.print("Inserisci un username: ");
@@ -193,8 +192,9 @@ public class client extends Thread {
                 String password = input.nextLine();
                 out.println(password);
             }
-        } 
+        }
         catch (NumberFormatException e) {System.out.println(e); }
         catch (IOException e) {System.out.println(e);}
+        return PRG;
     }
 }
