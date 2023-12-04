@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.*;
+import java.nio.charset.Charset;
 import java.util.Scanner;
 
 /* il client si connette al server, il client a seconda dell'operazione che vuole effettuare manda un codice STANDARD al server,
@@ -88,7 +89,7 @@ public class client extends Thread {
             }while(ar!=1 && ar!=2);
             //accesso o registrazione conclusa, preleviamo lo storico dei messaggi
             new client();
-            Scanner input=new Scanner(System.in);
+            Scanner input=new Scanner(System.in, "utf-8");
             while (true) {
                 String messaggio=input.nextLine();
                 if(messaggio.startsWith("/")){
