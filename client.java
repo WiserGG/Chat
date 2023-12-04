@@ -50,6 +50,9 @@ public class client extends Thread {
     //EXIT --> chiude la chat
     static final String EXIT = "71";
 
+    //SGC --> disconnessione
+    static final String SGC = "72";
+
     static Socket socket;
     public static void main(String[] args) throws IOException {
 
@@ -121,7 +124,7 @@ public class client extends Thread {
             while (true) {
                 try {
                     String messaggio=in.readLine();
-                    if(messaggio.equals(EXIT)){
+                    if(messaggio.equals(EXIT)||messaggio.equals(SGC)){
                         socket.close();
                         break;
                     }
