@@ -58,7 +58,7 @@ public class client extends Thread {
                                                 //InetAddress.getLocalHost()
             socket.connect(new InetSocketAddress(InetAddress.getByName("zuzu.sytes.net"), 3000));
             System.out.println("Client Socket: "+ socket);
-
+            
             //creazione stream di input e output 
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()), true);
@@ -69,9 +69,11 @@ public class client extends Thread {
             //schermata grafica pulsante accedi/registrati, se non riesce ad accedere messaggio errore, possibilità di riprovare senza tornare alla schermata di scelta, con pulsante per tornare indietro se hanno sbagliato 
             
             //valore scelta accesso(1) o registrazione(2)
-            System.out.println("1) Accesso\t2) Registrazione");
-            int ar = sc.nextInt();
+            int ar;
             do{
+                System.out.println("1) Accesso\t2) Registrazione");
+                ar = sc.nextInt();
+            
                 switch (ar) {
                     case 1:
                         Acc();
@@ -91,9 +93,10 @@ public class client extends Thread {
                 String messaggio=input.nextLine();
                 if(messaggio.startsWith("/")){
                     if(messaggio.toLowerCase().equals("/close")){
-                        System.out.println("Sicuro di voler chiudere la comunicazione?(s/n)");
-                        String risp=input.nextLine().toLowerCase();
+                        String risp;
                         do{
+                            System.out.println("Sicuro di voler chiudere la comunicazione?(s/n)");
+                            risp=input.nextLine().toLowerCase();
                             if(risp.equals("s")){
                                 out.println(EXIT);
                                 break;
@@ -146,12 +149,13 @@ public class client extends Thread {
                 System.out.println(codice); 
                 if(codice == UNT){
                     System.out.println("Utente o Password errata.");
-                    System.out.println("1) Registrazione\t2) Riprova");
-                    int ar = input.nextInt();
+                    int ar;
                     do{
+                        System.out.println("1) Registrazione\t2) Riprova");
+                        ar = input.nextInt();
+                    
                         switch (ar) {
                             case 1:
-                                out.println(ODR);
                                 Reg();
                                 System.out.println("Registrazione effettuata.");
                                 break;
