@@ -47,6 +47,7 @@ public class server extends Thread {
 
     //Codici per la disconnessione
     static final String EXIT = "71";
+    static final String SGC = "72";
 
     static ServerSocket socketBenvenuto;
     static Vector<Socket> list_socket = new Vector<Socket>(0, 1);
@@ -54,6 +55,7 @@ public class server extends Thread {
     BufferedReader in;
     PrintWriter out;
     utente user;
+    Socket mittente;
     public static void main(String[] args) throws IOException {
         //creazione socket server
         socketBenvenuto = new ServerSocket();
@@ -103,7 +105,7 @@ public class server extends Thread {
     @Override
     public void run() {
         //recuperiamo il client socket e aumentiamo il contatore dei client connessi
-        Socket mittente = list_socket.elementAt(counter_client++);
+        mittente = list_socket.elementAt(counter_client++);
         try {
             //blocco che gestisce l'accesso o la registrazione
             while (true) {
@@ -138,13 +140,7 @@ public class server extends Thread {
                 if(codice == PRG) break;
             }
 
-            for (String userOnline : list_userOnline) {
-                if(user.getUsername() == userOnline){
-                    System.out.println("Utente già connesso con un altro dispositivo, disconnessione forzata in corso");
-                    mittente.close();
-                    break;
-                } 
-            }
+            
 
             //fase per inviare lo storico dei messaggi al client
             InviaDati();
@@ -226,10 +222,18 @@ public class server extends Thread {
                     password = st.nextToken();
                 }
 
+                user = new utente(username, password);
+
                 //credenziali corrette, lo comunichiamo al client
                 if((password_client.equals(password)) && (username_client.equals(username))){
+                    if(list_userOnline.contains(user.getUsername())){
+                        out.println(SGC);
+                        fIN.close();
+                        list_socket.remove(mittente);
+                    }else list_userOnline.add(user.getUsername());
+
                     x = true;
-                    user = new utente(username, password);
+                    
                     //se abbiamo trovato l'utente usciamo dal ciclo con break
                     break;
                 }
