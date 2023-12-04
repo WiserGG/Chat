@@ -126,7 +126,10 @@ public class client extends Thread {
                         break;
                     }
                     else System.out.println(messaggio);
-                } catch (SocketException e) { System.out.println("Disconnessione temporanea con il server, impossibile leggere i messaggi: "+ e); }
+                } catch (SocketException e) { 
+                    System.out.println("Disconnessione temporanea con il server, impossibile leggere i messaggi: "+ e);
+                    socket.close();
+                }
             }
         } catch (IOException e) { System.out.println("Errore nella lettura del messaggio: "+e);}
     }
