@@ -156,7 +156,6 @@ public class server extends Thread {
                     
                     BroadCast(mittente, user, messaggio);
                 } catch ( SocketException e) { 
-                    System.out.println(e); 
                     ChiudiClientSocket(mittente, user);
                     break;
                 }
