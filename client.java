@@ -71,17 +71,19 @@ public class client extends Thread {
             //valore scelta accesso(1) o registrazione(2)
             System.out.println("1) Accesso\t2) Registrazione");
             int ar = sc.nextInt();
-            switch (ar) {
-                case 1:
-                    Acc();
-                    break;
-                case 2:
-                    Reg();
-                    System.out.println("Registrazione effettuata.");
-                    break;
-                default:
-                    break;
-            }
+            do{
+                switch (ar) {
+                    case 1:
+                        Acc();
+                        break;
+                    case 2:
+                        Reg();
+                        System.out.println("Registrazione effettuata.");
+                        break;
+                    default:
+                        break;
+                }
+            }while(ar!=1 || ar!=2);
             //accesso o registrazione conclusa, preleviamo lo storico dei messaggi
             new client();
             Scanner input=new Scanner(System.in);
@@ -91,10 +93,13 @@ public class client extends Thread {
                     if(messaggio.toLowerCase().equals("/close")){
                         System.out.println("Sicuro di voler chiudere la comunicazione?(s/n)");
                         String risp=input.nextLine().toLowerCase();
-                        if(risp.equals("s")){
-                            out.println(EXIT);
-                            break;
-                        }
+                        do{
+                            if(risp.equals("s")){
+                                out.println(EXIT);
+                                break;
+                            }
+                        }while(risp!="s" || risp!="n");
+                        
                     }
                 }
                 else out.println(messaggio); 
@@ -143,18 +148,20 @@ public class client extends Thread {
                     System.out.println("Utente o Password errata.");
                     System.out.println("1) Registrazione\t2) Riprova");
                     int ar = input.nextInt();
-                    switch (ar) {
-                        case 1:
-                            out.println(ODR);
-                            Reg();
-                            System.out.println("Registrazione effettuata.");
-                            break;
-                        case 2:
-                            Acc();
-                            break;
-                        default:
-                            break;
-                    }
+                    do{
+                        switch (ar) {
+                            case 1:
+                                out.println(ODR);
+                                Reg();
+                                System.out.println("Registrazione effettuata.");
+                                break;
+                            case 2:
+                                Acc();
+                                break;
+                            default:
+                                break;
+                        }
+                    }while(ar!=1 || ar!=2); 
                 }
                 else {
                     System.out.println("Accesso effettuato");
