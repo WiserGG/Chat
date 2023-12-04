@@ -53,51 +53,53 @@ public class client extends Thread {
     public static void main(String[] args) throws IOException {
 
         socket = new Socket();
-                                            //InetAddress.getByName("zuzu.sytes.net")
-                                            //InetAddress.getLocalHost()
-        socket.connect(new InetSocketAddress(InetAddress.getByName("zuzu.sytes.net"), 3000));
-        System.out.println("Client Socket: "+ socket);
+        try {
+                                                //InetAddress.getByName("zuzu.sytes.net")
+                                                //InetAddress.getLocalHost()
+            socket.connect(new InetSocketAddress(InetAddress.getByName("zuzu.sytes.net"), 3000));
+            System.out.println("Client Socket: "+ socket);
 
-        //creazione stream di input e output 
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()), true);
-        
-        Scanner sc = new Scanner(System.in);
+            //creazione stream di input e output 
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()), true);
+            
+            Scanner sc = new Scanner(System.in);
 
-        //accedi(1) o registrati(2), se credenziali non corrette invio codice dal server al client, mostra il messaggio di errore (rimane su accesso, decidere carattere per tornare alla sceolta accesso/registrazione)
-        //schermata grafica pulsante accedi/registrati, se non riesce ad accedere messaggio errore, possibilità di riprovare senza tornare alla schermata di scelta, con pulsante per tornare indietro se hanno sbagliato 
-        
-        //valore scelta accesso(1) o registrazione(2)
-        System.out.println("1) Accesso\t2) Registrazione");
-        int ar = sc.nextInt();
-        switch (ar) {
-            case 1:
-                Acc();
-                break;
-            case 2:
-                Reg();
-                System.out.println("Registrazione effettuata.");
-                break;
-            default:
-                break;
-        }
-        //accesso o registrazione conclusa, preleviamo lo storico dei messaggi
-        new client();
-        Scanner input=new Scanner(System.in);
-        while (true) {
-            String messaggio=input.nextLine();
-            if(messaggio.startsWith("/")){
-                if(messaggio.toLowerCase().equals("/close")){
-                    System.out.println("Sicuro di voler chiudere la comunicazione?(s/n)");
-                    String risp=input.nextLine().toLowerCase();
-                    if(risp.equals("s")){
-                        out.println(EXIT);
-                        break;
+            //accedi(1) o registrati(2), se credenziali non corrette invio codice dal server al client, mostra il messaggio di errore (rimane su accesso, decidere carattere per tornare alla sceolta accesso/registrazione)
+            //schermata grafica pulsante accedi/registrati, se non riesce ad accedere messaggio errore, possibilità di riprovare senza tornare alla schermata di scelta, con pulsante per tornare indietro se hanno sbagliato 
+            
+            //valore scelta accesso(1) o registrazione(2)
+            System.out.println("1) Accesso\t2) Registrazione");
+            int ar = sc.nextInt();
+            switch (ar) {
+                case 1:
+                    Acc();
+                    break;
+                case 2:
+                    Reg();
+                    System.out.println("Registrazione effettuata.");
+                    break;
+                default:
+                    break;
+            }
+            //accesso o registrazione conclusa, preleviamo lo storico dei messaggi
+            new client();
+            Scanner input=new Scanner(System.in);
+            while (true) {
+                String messaggio=input.nextLine();
+                if(messaggio.startsWith("/")){
+                    if(messaggio.toLowerCase().equals("/close")){
+                        System.out.println("Sicuro di voler chiudere la comunicazione?(s/n)");
+                        String risp=input.nextLine().toLowerCase();
+                        if(risp.equals("s")){
+                            out.println(EXIT);
+                            break;
+                        }
                     }
                 }
+                else out.println(messaggio); 
             }
-            else out.println(messaggio); 
-        }
+        } catch (SocketException e) { System.out.println("Disconnessione improvvisa avvenuta con il server: "+ e);}
     }
 
 
@@ -108,16 +110,18 @@ public class client extends Thread {
     //il thread è in costante lettura di messaggi in arrivo dal server
     @Override
     public void run() {
-        while (true) {
-            try {
-                String messaggio=in.readLine();
-                if(messaggio.equals(EXIT)){
-                    socket.close();
-                    break;
-                }
-                else System.out.println(messaggio);
-            } catch (IOException e) { System.out.println("Errore nella lettura del messaggio: "+e); }
-        }
+        try {
+            while (true) {
+                try {
+                    String messaggio=in.readLine();
+                    if(messaggio.equals(EXIT)){
+                        socket.close();
+                        break;
+                    }
+                    else System.out.println(messaggio);
+                } catch (IOException e) { System.out.println("Errore nella lettura del messaggio: "+e); }
+            }
+        } catch (Exception e) { System.out.println("Disconnessione temporanea con il server, impossibile leggere i messaggi: "+ e);}
     }
 
 
