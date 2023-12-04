@@ -83,7 +83,7 @@ public class client extends Thread {
                     default:
                         break;
                 }
-            }while(ar!=1 || ar!=2);
+            }while(ar!=1 && ar!=2);
             //accesso o registrazione conclusa, preleviamo lo storico dei messaggi
             new client();
             Scanner input=new Scanner(System.in);
@@ -98,7 +98,7 @@ public class client extends Thread {
                                 out.println(EXIT);
                                 break;
                             }
-                        }while(risp!="s" || risp!="n");
+                        }while(risp!="s" && risp!="n");
                         
                     }
                 }
@@ -161,7 +161,7 @@ public class client extends Thread {
                             default:
                                 break;
                         }
-                    }while(ar!=1 || ar!=2); 
+                    }while(ar!=1 && ar!=2); 
                 }
                 else {
                     System.out.println("Accesso effettuato");
