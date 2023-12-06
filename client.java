@@ -60,7 +60,7 @@ public class client extends Thread {
         try {
                                                 //InetAddress.getByName("zuzu.sytes.net")
                                                 //InetAddress.getLocalHost()
-            socket.connect(new InetSocketAddress(InetAddress.getByName("zuzu.sytes.net"), 3000));
+            socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 3000));
             System.out.println("Client Socket: "+ socket);
             
             //creazione stream di input e output 
@@ -124,14 +124,15 @@ public class client extends Thread {
             while (true) {
                 try {
                     String messaggio=in.readLine();
-                    if(messaggio.equals(EXIT)||messaggio.equals(SGC)){
+                    if(messaggio.equals(EXIT) || messaggio.equals(SGC)){
                         socket.close();
-                        break;
+                        System.exit(1);
                     }
                     else System.out.println(messaggio);
                 } catch (SocketException e) { 
                     System.out.println("Disconnessione temporanea con il server, impossibile leggere i messaggi: "+ e);
                     socket.close();
+                    System.exit(1);
                 }
             }
         } catch (IOException e) { System.out.println("Errore nella lettura del messaggio: "+e);}

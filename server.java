@@ -51,7 +51,7 @@ public class server extends Thread {
 
     static ServerSocket socketBenvenuto;
     static Vector<Socket> list_socket = new Vector<Socket>(0, 1);
-    static Vector<String> list_userOnline = new Vector<String>(0, 1);
+    static Vector<utente> list_userOnline = new Vector<utente>(0, 1);
     BufferedReader in;
     PrintWriter out;
     utente user;
@@ -89,14 +89,16 @@ public class server extends Thread {
         BroadCast(mittente, user, ("si e' disconnesso\nUtenti online: ".toUpperCase()+ --counter_client));
         list_socket.removeElement(mittente);
         list_socket.trimToSize();
+        list_userOnline.removeElement(user);
+        list_userOnline.trimToSize();
     }
 
     public server(Socket client_socket) throws IOException {
         //creazione dello Input/Output stream per la lettura e scrittura dei messaggi
         in = new BufferedReader(new InputStreamReader(client_socket.getInputStream()));
         out = new PrintWriter((new BufferedWriter(new OutputStreamWriter(client_socket.getOutputStream()))), true);
-        list_socket.add(client_socket);
-
+        // list_socket.add(client_socket);
+        mittente = client_socket;
         //sgancia e parte il thread
         start();
         System.out.println("Thread n." + (counter_client+1) +" sganciato");
@@ -105,7 +107,7 @@ public class server extends Thread {
     @Override
     public void run() {
         //recuperiamo il client socket e aumentiamo il contatore dei client connessi
-        mittente = list_socket.elementAt(counter_client++);
+        // mittente = list_socket.elementAt(counter_client++);
         try {
             //blocco che gestisce l'accesso o la registrazione
             while (true) {
@@ -140,8 +142,24 @@ public class server extends Thread {
                 if(codice == PRG) break;
             }
 
+            /* 
+             * se l'utente è già contento nella lista degli utente online allora
+             * deve essere disconnesso forzatamente poichè è già connesso da un altro dispositivo
+            */
+            boolean x = true;
+            for (utente users : list_userOnline) {
+                System.out.println("&ciao");
+                if(users.getUsername().equals(user.getUsername())) {
+                    System.out.println("ciao");
+                    out.println(SGC);
+                    throw new IOException();
+                }
+            }
             
-
+            list_userOnline.add(user);
+            list_socket.add(mittente);
+            counter_client++;
+            
             //fase per inviare lo storico dei messaggi al client
             InviaDati();
             out.println("Utenti online: ".toUpperCase()+ counter_client);
@@ -158,7 +176,7 @@ public class server extends Thread {
                     } 
                     //chiamiamo la funzione per scrivere il messaggio arrivato nello storico
                     else Service.ScriviMessaggio(user.getUsername()+": "+messaggio);
-                    
+
                     BroadCast(mittente, user, messaggio);
                 } catch ( SocketException e) { 
                     ChiudiClientSocket(mittente, user);
@@ -166,9 +184,7 @@ public class server extends Thread {
                 }
             }
         }
-        catch ( SocketException e) {
-            ChiudiClientSocket(mittente, user);
-        }
+        catch ( SocketException e) { ChiudiClientSocket(mittente, user); }
         catch ( IOException e){ System.out.println("Client disconnesso");}
     }
 
@@ -177,6 +193,7 @@ public class server extends Thread {
         for (Socket destinatario : list_socket) {
             if(mittente != destinatario){
                 try {
+
                     new PrintWriter(destinatario.getOutputStream(), true).println(user.getUsername()+": "+messaggio);
                 } catch (IOException e) { System.out.println(e); }
             }
@@ -226,14 +243,8 @@ public class server extends Thread {
 
                 //credenziali corrette, lo comunichiamo al client
                 if((password_client.equals(password)) && (username_client.equals(username))){
-                    if(list_userOnline.contains(user.getUsername())){
-                        out.println(SGC);
-                        fIN.close();
-                        list_socket.remove(mittente);
-                    }else list_userOnline.add(user.getUsername());
-
                     x = true;
-                    
+                    user = new utente(username, password);
                     //se abbiamo trovato l'utente usciamo dal ciclo con break
                     break;
                 }
