@@ -99,6 +99,7 @@ public class client extends Thread {
                 String messaggio=input.nextLine();
                 if(messaggio.startsWith("/")){
                     if(messaggio.toLowerCase().equals("/close")){
+                        //se il socket non è già chiuso allora possiamo chiuderlo
                         if(!socket.isClosed()){
                             String risp;
                             do{
@@ -117,10 +118,12 @@ public class client extends Thread {
                     }
                     //comando per riconnettersi al server
                     if(messaggio.toLowerCase().equals("/connect")){
+                        //se il socket è chiuso allora richiamo il metodo main per riavviare il tutto
                         if(socket.isClosed()) main(args);
                         else System.out.println("Sei già connesso con un utente al server, devi prima fare /close ");
                     } 
                 }
+                //evitiamo l'invio di messaggi vuoti da parte del client
                 else if(!messaggio.isEmpty()) out.println(messaggio); 
             }
         } catch (SocketException e) { System.out.println("Disconnessione improvvisa avvenuta con il server");}
