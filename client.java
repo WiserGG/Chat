@@ -99,26 +99,29 @@ public class client extends Thread {
                 String messaggio=input.nextLine();
                 if(messaggio.startsWith("/")){
                     if(messaggio.toLowerCase().equals("/close")){
-                        String risp;
-                        do{
-                            System.out.println("Sicuro di voler chiudere la comunicazione?(s/n)");
-                            risp=input.nextLine().toLowerCase();
-                            if(risp.equals("s")){
-                                out.println(EXIT);
-                                break;
-                            }
-                        }while(risp!="s" && risp!="n");
+                        if(!socket.isClosed()){
+                            String risp;
+                            do{
+                                System.out.println("Sicuro di voler chiudere la comunicazione?(s/n)");
+                                risp=input.nextLine().toLowerCase();
+                                if(risp.equals("s")){
+                                    out.println(EXIT);
+                                    break;
+                                }
+                            }while(risp!="s" && risp!="n");
+                        }
+                        else System.out.println("Non sei connesso al server con un utente, devi prima fare /connect ");
                     }
-                    else if(messaggio.toLowerCase().equals("/help")){
+                    if(messaggio.toLowerCase().equals("/help")){
                         System.out.println("Comandi disponibili:\n/help --> Informazioni sui comandi\n/close --> Chiudi connessione\n/connect --> Apri connessione");
                     }
                     //comando per riconnettersi al server
-                    else if(messaggio.toLowerCase().equals("/connect")){
-                        if(!socket.isConnected()) main(args);
-                        else System.out.println("Sei già connesso con un utente, devi prima fare /close ");
+                    if(messaggio.toLowerCase().equals("/connect")){
+                        if(socket.isClosed()) main(args);
+                        else System.out.println("Sei già connesso con un utente al server, devi prima fare /close ");
                     } 
                 }
-                else out.println(messaggio); 
+                else if(!messaggio.isEmpty()) out.println(messaggio); 
             }
         } catch (SocketException e) { System.out.println("Disconnessione improvvisa avvenuta con il server");}
     }
