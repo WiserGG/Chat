@@ -47,7 +47,9 @@ public class server extends Thread {
 
     //Codici per la disconnessione
     static final String EXIT = "71";
-    static final String SGC = "72";
+
+    //UGC = Utente Già Connesso
+    static final String UGC = "72"; 
 
     static ServerSocket socketBenvenuto;
     static Vector<Socket> list_socket = new Vector<Socket>(0, 1);
@@ -143,15 +145,15 @@ public class server extends Thread {
             }
 
             /* 
-             * se l'utente è già contento nella lista degli utente online allora
+             * se l'utente è già contento nella lista degli utenti online allora
              * deve essere disconnesso forzatamente poichè è già connesso da un altro dispositivo
+             * (l'azione è da considerarsi una possibile violazione di un account)
             */
-            boolean x = true;
             for (utente users : list_userOnline) {
-                System.out.println("&ciao");
+                //verifica se il nome utente del client è uguale a uno già contenuto nel vettore degli utenti
                 if(users.getUsername().equals(user.getUsername())) {
-                    System.out.println("ciao");
-                    out.println(SGC);
+                    //comunica al client che è presente un socket già connesso con le stesse credenziali di accesso
+                    out.println(UGC);
                     throw new IOException();
                 }
             }
