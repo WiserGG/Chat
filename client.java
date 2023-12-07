@@ -59,7 +59,7 @@ public class client extends Thread {
         try {         
             try {                               //InetAddress.getByName("zuzu.sytes.net")
                                                 //InetAddress.getLocalHost()
-                socket.connect(new InetSocketAddress(InetAddress.getByName("zuzu.sytes.net"), 3000));
+                socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 3000));
             } catch (IOException e) { System.out.println("Connessione con il server fallita, riprova");}
 
             System.out.println("Client Socket: "+ socket);
@@ -137,11 +137,13 @@ public class client extends Thread {
                     if(messaggio.equals(EXIT) || messaggio.equals(UGC)){
                         socket.close();
                         System.out.println("Disconnessione con il client avvenuta con successo");
+                        break;
                     }
                     else System.out.println(messaggio);
                 } catch (SocketException e) { 
                     System.out.println("Disconnessione temporanea con il server, impossibile leggere i messaggi");
                     socket.close();
+                    break;
                 }
             }
         } catch (IOException e) { System.out.println("Errore nella lettura del messaggio");}
