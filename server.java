@@ -86,9 +86,12 @@ public class server extends Thread {
         socketBenvenuto.close();
     }
     
+    //il metodo si occupa della chiusura dei client 
     public static void ChiudiClientSocket(Socket mittente, utente user){
         System.out.println("Il client "+mittente.getLocalSocketAddress()+" si è disconnesso".toUpperCase());
+        //avvisiamo tutti i client della disconnessione di un utente
         BroadCast(mittente, user, ("si e' disconnesso\nUtenti online: ".toUpperCase()+ --counter_client));
+        //lo rimuoviamo dalla lista dei socket e da quella degli utenti online 
         list_socket.removeElement(mittente);
         list_socket.trimToSize();
         list_userOnline.removeElement(user);
@@ -99,7 +102,6 @@ public class server extends Thread {
         //creazione dello Input/Output stream per la lettura e scrittura dei messaggi
         in = new BufferedReader(new InputStreamReader(client_socket.getInputStream()));
         out = new PrintWriter((new BufferedWriter(new OutputStreamWriter(client_socket.getOutputStream()))), true);
-        // list_socket.add(client_socket);
         mittente = client_socket;
         //sgancia e parte il thread
         start();
@@ -108,8 +110,6 @@ public class server extends Thread {
 
     @Override
     public void run() {
-        //recuperiamo il client socket e aumentiamo il contatore dei client connessi
-        // mittente = list_socket.elementAt(counter_client++);
         try {
             //blocco che gestisce l'accesso o la registrazione
             while (true) {
@@ -154,15 +154,19 @@ public class server extends Thread {
                 if(users.getUsername().equals(user.getUsername())) {
                     //comunica al client che è presente un socket già connesso con le stesse credenziali di accesso
                     out.println(UGC);
+                    //lanciamo un eccezzione per far terminare l'esecuzione di questo thread 
                     throw new IOException();
                 }
             }
-            
+            /*
+             * terminata l'operazione di accesso/registrazione e il controllo sull'utenza possiamo aggiungere il socket
+             * alla lista dei socket e l'oggetto user alla lista degli utenti
+            */ 
             list_userOnline.add(user);
             list_socket.add(mittente);
             counter_client++;
             
-            //fase per inviare lo storico dei messaggi al client
+            //metodo per inviare lo storico dei messaggi al client
             InviaDati();
             out.println("Utenti online: ".toUpperCase()+ counter_client);
             BroadCast(mittente, user, ("si e' connesso alla chat\nUtenti online: ".toUpperCase()+ counter_client));
@@ -173,6 +177,7 @@ public class server extends Thread {
                     String messaggio = in.readLine();
                     if(messaggio.equals(EXIT)){
                         ChiudiClientSocket(mittente, user);
+                        //confermiamo l'uscita al client
                         out.println(EXIT);
                         break;
                     } 
@@ -195,7 +200,6 @@ public class server extends Thread {
         for (Socket destinatario : list_socket) {
             if(mittente != destinatario){
                 try {
-
                     new PrintWriter(destinatario.getOutputStream(), true).println(user.getUsername()+": "+messaggio);
                 } catch (IOException e) { System.out.println(e); }
             }

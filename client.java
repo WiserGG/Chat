@@ -56,10 +56,12 @@ public class client extends Thread {
     public static void main(String[] args) throws IOException {
 
         socket = new Socket();
-        try {
-                                                //InetAddress.getByName("zuzu.sytes.net")
+        try {         
+            try {                               //InetAddress.getByName("zuzu.sytes.net")
                                                 //InetAddress.getLocalHost()
-            socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 3000));
+                socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 3000));
+            } catch (IOException e) { System.out.println("Connessione con il server fallita, riprova");}
+
             System.out.println("Client Socket: "+ socket);
             
             //creazione stream di input e output 
@@ -83,7 +85,6 @@ public class client extends Thread {
                         break;
                     case 2:
                         Reg();
-                        System.out.println("Registrazione effettuata.");
                         break;
                     default:
                         break;
@@ -93,6 +94,8 @@ public class client extends Thread {
             new client();
             Scanner input=new Scanner(System.in, "utf-8");
             while (true) {
+                System.out.println("$ ");
+                //tutti i messaggi che iniziano con '/' pur se inviati al server non verranno memorizzati nello storico
                 String messaggio=input.nextLine();
                 if(messaggio.startsWith("/")){
                     if(messaggio.toLowerCase().equals("/close")){
@@ -109,7 +112,7 @@ public class client extends Thread {
                 }
                 else out.println(messaggio); 
             }
-        } catch (SocketException e) { System.out.println("Disconnessione improvvisa avvenuta con il server: "+ e);}
+        } catch (SocketException e) { System.out.println("Disconnessione improvvisa avvenuta con il server");}
     }
 
     public client() {
@@ -125,16 +128,17 @@ public class client extends Thread {
                     String messaggio=in.readLine();
                     if(messaggio.equals(EXIT) || messaggio.equals(UGC)){
                         socket.close();
+                        System.out.println("Disconnessione con il client avvenuta con successo");
                         System.exit(1);
                     }
                     else System.out.println(messaggio);
                 } catch (SocketException e) { 
-                    System.out.println("Disconnessione temporanea con il server, impossibile leggere i messaggi: "+ e);
+                    System.out.println("Disconnessione temporanea con il server, impossibile leggere i messaggi");
                     socket.close();
                     System.exit(1);
                 }
             }
-        } catch (IOException e) { System.out.println("Errore nella lettura del messaggio: "+e);}
+        } catch (IOException e) { System.out.println("Errore nella lettura del messaggio");}
     }
 
 
@@ -162,7 +166,6 @@ public class client extends Thread {
                         switch (ar) {
                             case 1:
                                 codice = Reg();
-                                System.out.println("Registrazione effettuata.");
                                 break;
                             case 2:
                                 Acc();
@@ -198,6 +201,7 @@ public class client extends Thread {
                 System.out.print("Crea password: ");
                 String password = input.nextLine();
                 out.println(password);
+                System.out.println("Registrazione effettuata.");
             }
         }
         catch (NumberFormatException e) {System.out.println(e); }

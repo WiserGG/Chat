@@ -8,16 +8,9 @@
  * - il file originale/backup dello storico e degli username deve essere nella stessa posizione del progetto
 */
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
+import java.io.*;
+import java.nio.file.*;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
@@ -123,7 +116,7 @@ public class Service extends Thread {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("hh:mm:ss dd/MM/yyyy").withZone(ZoneId.of("Europe/Rome")).withLocale(Locale.ITALY);
             LocalDateTime dateTime = LocalDateTime.of(LocalDate.now(), LocalTime.now());
             PrintWriter fOUT = new PrintWriter(new FileWriter(messaggi, true), true);
-            fOUT.println(dateTime.format(formatter)+" "+messaggio);
+            fOUT.println("["+dateTime.format(formatter)+"]"+" "+messaggio);
             fOUT.close();
         } catch (Exception e) { System.out.println("Errore nella scrittura del messaggio nel file: "+e); }
     }
