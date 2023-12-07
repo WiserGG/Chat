@@ -113,6 +113,10 @@ public class client extends Thread {
                     if(messaggio.toLowerCase().equals("/help")){
                         System.out.println("Comandi disponibili:\n/help --> Informazioni sui comandi\n/close --> Chiudi connessione");
                     }
+                    //comando per riconnettersi al server
+                    if(messaggio.toLowerCase().equals("/connect")){
+                        main(args);
+                    } 
                 }
                 else out.println(messaggio); 
             }
