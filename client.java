@@ -59,7 +59,7 @@ public class client extends Thread {
         try {         
             try {                               //InetAddress.getByName("zuzu.sytes.net")
                                                 //InetAddress.getLocalHost()
-                socket.connect(new InetSocketAddress(InetAddress.getLocalHost(), 3000));
+                socket.connect(new InetSocketAddress(InetAddress.getByName("zuzu.sytes.net"), 3000));
             } catch (IOException e) { System.out.println("Connessione con il server fallita, riprova");}
 
             System.out.println("Client Socket: "+ socket);
@@ -111,7 +111,7 @@ public class client extends Thread {
                         }while(risp!="s" && risp!="n");
                     }
                     if(messaggio.toLowerCase().equals("/help")){
-                        System.out.println("Comandi disponibili:\n/help --> Informazioni sui comandi\n/close --> Chiudi connessione");
+                        System.out.println("Comandi disponibili:\n/help --> Informazioni sui comandi\n/close --> Chiudi connessione\n/connect --> Apri connessione");
                     }
                     //comando per riconnettersi al server
                     if(messaggio.toLowerCase().equals("/connect")){
