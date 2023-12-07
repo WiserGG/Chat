@@ -95,7 +95,6 @@ public class client extends Thread {
             new client();
             Scanner input=new Scanner(System.in, "utf-8");
             while (true) {
-                System.out.println("$ ");
                 //tutti i messaggi che iniziano con '/' pur se inviati al server non verranno memorizzati nello storico
                 String messaggio=input.nextLine();
                 if(messaggio.startsWith("/")){
@@ -110,12 +109,13 @@ public class client extends Thread {
                             }
                         }while(risp!="s" && risp!="n");
                     }
-                    if(messaggio.toLowerCase().equals("/help")){
+                    else if(messaggio.toLowerCase().equals("/help")){
                         System.out.println("Comandi disponibili:\n/help --> Informazioni sui comandi\n/close --> Chiudi connessione\n/connect --> Apri connessione");
                     }
                     //comando per riconnettersi al server
-                    if(messaggio.toLowerCase().equals("/connect")){
-                        main(args);
+                    else if(messaggio.toLowerCase().equals("/connect")){
+                        if(!socket.isConnected()) main(args);
+                        else System.out.println("Sei già connesso con un utente, devi prima fare /close ");
                     } 
                 }
                 else out.println(messaggio); 
