@@ -137,13 +137,11 @@ public class client extends Thread {
                     if(messaggio.equals(EXIT) || messaggio.equals(UGC)){
                         socket.close();
                         System.out.println("Disconnessione con il client avvenuta con successo");
-                        System.exit(1);
                     }
                     else System.out.println(messaggio);
                 } catch (SocketException e) { 
                     System.out.println("Disconnessione temporanea con il server, impossibile leggere i messaggi");
                     socket.close();
-                    System.exit(1);
                 }
             }
         } catch (IOException e) { System.out.println("Errore nella lettura del messaggio");}
