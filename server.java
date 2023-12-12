@@ -88,7 +88,7 @@ public class server extends Thread {
     
     //il metodo si occupa della chiusura dei client 
     public static void ChiudiClientSocket(Socket mittente, utente user){
-        System.out.println("Il client "+mittente.getLocalSocketAddress()+" si è disconnesso".toUpperCase());
+        System.out.println("Il client "+mittente.getRemoteSocketAddress()+" si è disconnesso".toUpperCase());
         //avvisiamo tutti i client della disconnessione di un utente
         BroadCast(mittente, user, ("si e' disconnesso\nUtenti online: ".toUpperCase()+ --counter_client));
         //lo rimuoviamo dalla lista dei socket e da quella degli utenti online 
@@ -105,7 +105,7 @@ public class server extends Thread {
         mittente = client_socket;
         //sgancia e parte il thread
         start();
-        System.out.println("Thread n." + (counter_client+1) +" sganciato");
+        System.out.println("Thread n." + (++counter_client) +" sganciato");
     }
 
     @Override
@@ -268,7 +268,7 @@ public class server extends Thread {
 
     private int Registrazione() {
         try {
-            String username = in.readLine();
+            String username = in.readLine().toLowerCase();
             BufferedReader fIN = new BufferedReader(new FileReader(Service.userList));
             boolean disponibile = false;
             
