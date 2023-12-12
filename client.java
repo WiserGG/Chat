@@ -109,6 +109,7 @@ public class client extends Thread {
                                     out.println(EXIT);
                                     break;
                                 }
+                                else break;
                             }while(risp!="s" && risp!="n");
                         }
                         else System.out.println("Non sei connesso al server con un utente, devi prima fare /connect ");
