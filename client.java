@@ -143,7 +143,8 @@ public class client extends Thread {
                     String messaggio=in.readLine();
                     if(messaggio.equals(EXIT) || messaggio.equals(UGC)){
                         socket.close();
-                        System.out.println("Disconnessione con il client avvenuta con successo");
+                        if(messaggio.equals(EXIT)) System.out.println("Disconnessione con il client avvenuta con successo");
+                        else System.out.println("Sei già connesso da un altro dispositivo, disconnessione forzata. Digita /help per aiuto");
                         break;
                     }
                     else System.out.println(messaggio);
@@ -170,7 +171,7 @@ public class client extends Thread {
         try {
             while (true) {
                 codice = Integer.parseInt(in.readLine());
-                System.out.println(codice); 
+                //System.out.println(codice); 
                 if(codice == UNT){
                     System.out.println("Utente o Password errata.");
                     int ar;
